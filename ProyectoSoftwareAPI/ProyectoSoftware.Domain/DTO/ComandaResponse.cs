@@ -1,6 +1,4 @@
-﻿using ProyectoSoftware.Domain.Models;
-
-namespace ProyectoSoftware.Domain.DTO
+﻿namespace ProyectoSoftware.Domain.DTO
 {
     public class ComandaResponse
     {
@@ -8,6 +6,6 @@ namespace ProyectoSoftware.Domain.DTO
         public List<MercaderiaComandaResponse>? mercaderias { get; set; }
         public FormaEntrega formaEntrega { get; set; }
         public double total { get; set; }
-        public DateTime Fecha { get; set; }
+        public DateTime fecha { get; set; }
     }
 }

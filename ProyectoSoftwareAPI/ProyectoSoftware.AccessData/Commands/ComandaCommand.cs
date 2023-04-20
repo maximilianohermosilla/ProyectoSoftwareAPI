@@ -12,11 +12,10 @@ namespace ProyectoSoftware.AccessData.Commands
         {
             _context = context;
         }
-        public async Task<Comanda> Insert(List<Mercaderia> listaProductos, FormaEntrega formaEntrega, int precio)
+        public async Task<Comanda> Insert(List<Mercaderia> listaProductos, int formaEntrega)
         {
             Comanda comanda = new Comanda();
-            comanda.FormaEntregaId = formaEntrega.FormaEntregaId;
-            comanda.PrecioTotal = precio;
+            comanda.FormaEntregaId = formaEntrega;
             comanda.Fecha = DateTime.Now;
 
             _context.Add(comanda);

@@ -10,6 +10,6 @@ namespace ProyectoSoftware.Domain.ICommands
 {
     public interface IComandaCommand
     {
-        Task<Comanda> Insert(List<Mercaderia> listaProductos, FormaEntrega formaEntrega, int precio);
+        Task<Comanda> Insert(List<Mercaderia> listaProductos, int formaEntrega);
     }
 }

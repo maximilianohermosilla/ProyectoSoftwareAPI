@@ -19,11 +19,11 @@ namespace ProyectoSoftwareAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<TipoMercaderia>> GetAll() 
+        public async Task<IActionResult> GetAll() 
         {
             try
             {
-                var response = _tipoMercaderiaService.GetAll();
+                var response = await _tipoMercaderiaService.GetAll();
                 //var numero = int.Parse("2g");
                 //return new JsonResult(response) { StatusCode = 200 };
                 return Ok(response);
