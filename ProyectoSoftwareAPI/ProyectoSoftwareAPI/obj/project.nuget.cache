@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bfNNulwpHSDz+mETbOi4pucBFK7iemGUAud4xnhVdYtvTQVKn0aw/HhTzE7eEdpAYF4bRFQyy73NZxTDvsuDpA==",
+  "dgSpecHash": "n+cMxb4iJsDEI0q73KeI/2UbA5FAa063Y1Wtg0SeW3FjS6YxcFW2R1DxlzsVxcb4jcyfZGAXhh02wnwv05pBtA==",
   "success": true,
-  "projectFilePath": "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI.csproj",
+  "projectFilePath": "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\maxim\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\maxim\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

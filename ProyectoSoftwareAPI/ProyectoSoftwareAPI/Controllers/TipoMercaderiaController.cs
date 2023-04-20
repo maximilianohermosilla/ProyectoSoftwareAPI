@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoSoftware.Application.Interfaces;
+using ProyectoSoftware.Domain.DTO;
+using ProyectoSoftware.Domain.Models;
 
 namespace ProyectoSoftwareAPI.Controllers
 {
@@ -16,16 +19,19 @@ namespace ProyectoSoftwareAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll() 
+        public ActionResult<IEnumerable<TipoMercaderia>> GetAll() 
         {
             try
             {
-                var response = await _tipoMercaderiaService.GetAll();
-                return new JsonResult(response) { StatusCode = 200 };
+                var response = _tipoMercaderiaService.GetAll();
+                //var numero = int.Parse("2g");
+                //return new JsonResult(response) { StatusCode = 200 };
+                return Ok(response);
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return new JsonResult(new { Message = e.Message }) { StatusCode = 400 };
+                //return BadRequest(e.Message);
             }
         }
     }

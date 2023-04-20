@@ -3783,11 +3783,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI.csproj",
+      "projectUniqueName": "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI.csproj",
       "projectName": "ProyectoSoftwareAPI",
-      "projectPath": "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI.csproj",
+      "projectPath": "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI.csproj",
       "packagesPath": "C:\\Users\\maxim\\.nuget\\packages\\",
-      "outputPath": "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\obj\\",
+      "outputPath": "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3809,8 +3809,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftware.AccessData\\ProyectoSoftware.AccessData.csproj": {
-              "projectPath": "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftware.AccessData\\ProyectoSoftware.AccessData.csproj"
+            "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftware.AccessData\\ProyectoSoftware.AccessData.csproj": {
+              "projectPath": "F:\\GitHub\\Net\\ProyectoSoftware\\ProyectoSoftwareAPI\\ProyectoSoftwareAPI\\ProyectoSoftware.AccessData\\ProyectoSoftware.AccessData.csproj"
             }
           }
         }
