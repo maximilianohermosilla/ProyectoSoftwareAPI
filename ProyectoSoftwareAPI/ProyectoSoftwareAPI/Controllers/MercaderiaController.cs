@@ -25,7 +25,6 @@ namespace ProyectoSoftwareAPI.Controllers
         {
             try
             {
-                int numbre = int.Parse("Ac");
                 var response = await _service.Insert(request);
                 if (response == null)
                 {

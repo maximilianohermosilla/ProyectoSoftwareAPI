@@ -2,7 +2,7 @@
 {
     public class ComandaRequest
     {
-        public List<MercaderiaResponse>? mercaderias { get; set; }
+        public List<int>? mercaderias { get; set; }
         public int formaEntrega { get; set; }
     }
 }

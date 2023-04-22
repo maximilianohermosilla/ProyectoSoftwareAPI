@@ -5,8 +5,10 @@ using ProyectoSoftware.AccessData.Commands;
 using ProyectoSoftware.AccessData.Queries;
 using ProyectoSoftware.Application.Interfaces;
 using ProyectoSoftware.Application.Services;
+using ProyectoSoftware.Domain.DTO;
 using ProyectoSoftware.Domain.ICommands;
 using ProyectoSoftware.Domain.IQueries;
+using ProyectoSoftware.Domain.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,12 +18,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-
-//builder.Services.AddSwaggerGen(c =>
-//{
-//    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProyectoSoftware Parte 2 API", Version = "v1" });
-//});
 
 //CONNECTION STRING
 var connectionString = builder.Configuration["ConnectionString"];
@@ -43,6 +39,7 @@ builder.Services.AddTransient<ITipoMercaderiaCommand, TipoMercaderiaCommand>();
 builder.Services.AddTransient<IMercaderiaCommand, MercaderiaCommand>();
 //builder.Services.AddTransient<IFormaEntregaCommand, FormaEntregaCommand>();
 builder.Services.AddTransient<IComandaCommand, ComandaCommand>();
+builder.Services.AddTransient<IComandaMercaderiaCommand, ComandaMercaderiaCommand>();
 builder.Services.AddTransient<IMigracionCommand, MigracionCommand>();
 
 var app = builder.Build();

@@ -39,39 +39,21 @@ namespace ProyectoSoftware.AccessData.Queries
             }
 
             return lista;
-           
-
         }
 
-        public async Task<List<ComandaResponse>> GetByDate(DateTime fecha)
+        public async Task<Comanda> GetById(Guid id)
         {
-            var lista = await _context.Comandas.Include(f => f.FormaEntregaNavigation).Include(e => e.ComandasMercaderia).ThenInclude(cm => cm.MercaderiaNavigation).Where(e => e.Fecha == fecha).ToListAsync();
-            List<ComandaResponse> listaDTO = new List<ComandaResponse>();
-            foreach (var item in lista)
-            {
-                ComandaResponse comandaResponse = new ComandaResponse();
-                comandaResponse.id = item.ComandaId;
-                comandaResponse.mercaderias = new List<MercaderiaComandaResponse>();
-                comandaResponse.formaEntrega = new Domain.DTO.FormaEntrega();
-                comandaResponse.formaEntrega.id = item.FormaEntregaNavigation.FormaEntregaId;
-                comandaResponse.formaEntrega.descripcion = item.FormaEntregaNavigation.Descripcion;
-                comandaResponse.total = item.PrecioTotal;
-                comandaResponse.fecha = item.Fecha;
+            var response = await _context.Comandas.Include(f => f.FormaEntregaNavigation).Include(e => e.ComandasMercaderia).ThenInclude(cm => cm.MercaderiaNavigation).Where(e => e.ComandaId == id).FirstOrDefaultAsync();
 
-                foreach (var mercaderia in item.ComandasMercaderia)
-                {
-                    MercaderiaComandaResponse mercResponse = new MercaderiaComandaResponse();
-                    mercResponse.id = mercaderia.MercaderiaNavigation.MercaderiaId;
-                    mercResponse.nombre = mercaderia.MercaderiaNavigation.Nombre;
-                    mercResponse.precio = mercaderia.MercaderiaNavigation.Precio;
+            return response;
+        }
 
-                    comandaResponse.mercaderias?.Add(mercResponse);
-                }
-
-                listaDTO.Add(comandaResponse);
-            }
-            
-            return listaDTO;
+        public async Task<List<Comanda>> GetByDate(DateTime fecha)
+        {
+            var lista = await _context.Comandas.Include(f => f.FormaEntregaNavigation).Include(e => e.ComandasMercaderia)
+                                               .ThenInclude(cm => cm.MercaderiaNavigation).Where(e => e.Fecha == fecha).ToListAsync();
+                        
+            return lista;
         }
     }
 }

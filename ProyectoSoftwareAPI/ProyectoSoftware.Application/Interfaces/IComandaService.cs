@@ -7,6 +7,6 @@ namespace ProyectoSoftware.Application.Interfaces
     {
         Task<List<Comanda>> GetAll();
         Task<List<ComandaResponse>> GetByDate(string fecha);
-        Task<Comanda> Insert(List<Mercaderia> listaProductos, int formaEntrega);
+        Task<ComandaResponse> Insert(List<int> mercaderias, int formaEntrega);
     }
 }

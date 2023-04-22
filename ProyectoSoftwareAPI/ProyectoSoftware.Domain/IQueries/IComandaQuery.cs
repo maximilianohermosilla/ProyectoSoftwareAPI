@@ -6,6 +6,7 @@ namespace ProyectoSoftware.Domain.IQueries
     public interface IComandaQuery
     {
         Task<List<Comanda>> GetAll();
-        Task<List<ComandaResponse>> GetByDate(DateTime fecha);
+        Task<Comanda> GetById(Guid id);
+        Task<List<Comanda>> GetByDate(DateTime fecha);
     }
 }
