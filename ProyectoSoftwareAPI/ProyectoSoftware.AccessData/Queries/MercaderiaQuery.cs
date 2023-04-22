@@ -25,5 +25,27 @@ namespace ProyectoSoftware.AccessData.Queries
 
             return lista;
         }
+
+        public async Task<List<Mercaderia>> GetByTypeNameOrder(int? tipo, string? nombre, string orden)
+        {
+            var lista = new List<Mercaderia>();
+
+            if (orden == "DESC")
+            {
+                lista = await _context.Mercaderias.Include(m => m.TipoMercaderiaNavigation)
+                                                    .Where(m => (tipo == null || m.TipoMercaderiaId == tipo)
+                                                          && (nombre == null || m.Nombre.Contains(nombre)))
+                                                    .OrderByDescending(m => m.Precio).ToListAsync();
+            }
+            else
+            {
+                lista = await _context.Mercaderias.Include(m => m.TipoMercaderiaNavigation)
+                                                    .Where(m => (tipo == null || m.TipoMercaderiaId == tipo)
+                                                          && (nombre == null || m.Nombre.Contains(nombre)))
+                                                    .OrderBy(m => m.Precio).ToListAsync();
+            }            
+
+            return lista;
+        }
     }
 }

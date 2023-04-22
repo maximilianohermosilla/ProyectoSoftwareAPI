@@ -1,4 +1,6 @@
 ﻿using ProyectoSoftware.Application.Interfaces;
+using ProyectoSoftware.Domain.DTO;
+using ProyectoSoftware.Domain.ICommands;
 using ProyectoSoftware.Domain.IQueries;
 using ProyectoSoftware.Domain.Models;
 
@@ -6,25 +8,105 @@ namespace ProyectoSoftware.Application.Services
 {
     public class MercaderiaService: IMercaderiaService
     {        
-        private readonly IMercaderiaQuery _mercaderiaQuery;
+        private readonly IMercaderiaQuery _query;
+        private readonly IMercaderiaCommand _command;
 
-        public MercaderiaService(IMercaderiaQuery mercaderiaQuery)
+        public MercaderiaService(IMercaderiaQuery query, IMercaderiaCommand command)
         {
-            _mercaderiaQuery = mercaderiaQuery;
+            _query = query;
+            _command = command;
         }
 
         public async Task<List<Mercaderia>> GetAll()
         {
-            var mercaderias = await _mercaderiaQuery.GetAll();
+            var mercaderias = await _query.GetAll();
 
             return mercaderias;
         }
 
         public async Task<List<Mercaderia>> GetAllByType(int tipoMercaderiaId)
         {
-            var mercaderias = await _mercaderiaQuery.GetAllByType(tipoMercaderiaId);
+            var mercaderias = await _query.GetAllByType(tipoMercaderiaId);
 
             return mercaderias;
+        }
+
+        public async Task<IEnumerable<MercaderiaGetResponse>> GetByTypeNameOrder(int? tipo, string? nombre, string orden)
+        {
+            List<MercaderiaGetResponse> listaDTO = new List<MercaderiaGetResponse>();
+
+            try
+            { 
+                orden = orden.ToUpper() == "DESC" ? "DESC" : "ASC";
+                var lista = await _query.GetByTypeNameOrder(tipo, nombre, orden);
+
+                foreach (var mercaderia in lista)
+                {
+                    if (mercaderia != null)
+                    {
+                        MercaderiaGetResponse mercaderiaResponse = new MercaderiaGetResponse
+                        {
+                            id = mercaderia.MercaderiaId,
+                            nombre = mercaderia.Nombre,
+                            precio = mercaderia.Precio,
+                            tipo = new TipoMercaderiaResponse { id = mercaderia.TipoMercaderiaNavigation.TipoMercaderiaId, descripcion = mercaderia.TipoMercaderiaNavigation.Descripcion },
+                            imagen = mercaderia.Imagen
+                        };
+
+                        listaDTO.Add(mercaderiaResponse);
+                    }
+                }    
+                
+                return listaDTO;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<MercaderiaResponse> Insert(MercaderiaRequest mercaderiaRequest)
+        {
+            MercaderiaResponse mercaderiaResponse = new MercaderiaResponse();
+
+            try
+            {
+                Mercaderia mercaderia = new Mercaderia
+                {
+                    Nombre = mercaderiaRequest.nombre,
+                    TipoMercaderiaId = mercaderiaRequest.tipo,
+                    Precio = Convert.ToInt32(mercaderiaRequest.precio),
+                    Ingredientes = mercaderiaRequest.ingredientes,
+                    Preparacion = mercaderiaRequest.preparacion,
+                    Imagen = mercaderiaRequest.imagen
+                };
+
+                var response = await _command.Insert(mercaderia);
+
+                if (response != null)
+                {
+                    mercaderiaResponse = new MercaderiaResponse
+                    {
+                        id = response.MercaderiaId,
+                        nombre = response.Nombre,
+                        tipo = new TipoMercaderiaResponse { id = response.TipoMercaderiaId, descripcion = "" },
+                        precio = response.Precio,
+                        ingredientes = response.Ingredientes,
+                        imagen = response.Imagen,
+                        preparacion = response.Preparacion                    
+                    };
+                }
+                else
+                {
+                    mercaderiaResponse = null;
+                }
+
+                return mercaderiaResponse;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

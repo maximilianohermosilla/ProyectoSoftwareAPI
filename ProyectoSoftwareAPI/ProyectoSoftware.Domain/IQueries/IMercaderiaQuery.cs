@@ -6,5 +6,6 @@ namespace ProyectoSoftware.Domain.IQueries
     {
         Task<List<Mercaderia>> GetAll();
         Task<List<Mercaderia>> GetAllByType(int tipoMercaderiaId);
+        Task<List<Mercaderia>> GetByTypeNameOrder(int? tipo, string? nombre, string orden);
     }
 }

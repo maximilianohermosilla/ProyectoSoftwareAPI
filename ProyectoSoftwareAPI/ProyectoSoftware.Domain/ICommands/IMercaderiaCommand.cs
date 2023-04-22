@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ProyectoSoftware.Domain.Models;
 
 namespace ProyectoSoftware.Domain.ICommands
 {
     public interface IMercaderiaCommand
     {
+        Task<Mercaderia> Insert(Mercaderia mercaderia);
     }
 }

@@ -15,11 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProyectoSoftware Parte 2 API", Version = "v1" });
-});
+builder.Services.AddSwaggerGen();
+
+
+//builder.Services.AddSwaggerGen(c =>
+//{
+//    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProyectoSoftware Parte 2 API", Version = "v1" });
+//});
 
 //CONNECTION STRING
 var connectionString = builder.Configuration["ConnectionString"];
@@ -38,7 +40,7 @@ builder.Services.AddTransient<IFormaEntregaQuery, FormaEntregaQuery>();
 builder.Services.AddTransient<IComandaQuery, ComandaQuery>();
 
 builder.Services.AddTransient<ITipoMercaderiaCommand, TipoMercaderiaCommand>();
-//builder.Services.AddTransient<IMercaderiaCommand, MercaderiaCommand>();
+builder.Services.AddTransient<IMercaderiaCommand, MercaderiaCommand>();
 //builder.Services.AddTransient<IFormaEntregaCommand, FormaEntregaCommand>();
 builder.Services.AddTransient<IComandaCommand, ComandaCommand>();
 builder.Services.AddTransient<IMigracionCommand, MigracionCommand>();
