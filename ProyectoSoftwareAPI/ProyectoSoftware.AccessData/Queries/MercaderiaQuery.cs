@@ -26,6 +26,28 @@ namespace ProyectoSoftware.AccessData.Queries
             return lista;
         }
 
+        public async Task<Mercaderia> GetById(int id)
+        {
+            var mercaderia = await _context.Mercaderias.Include(m => m.TipoMercaderiaNavigation).Where(m => m.MercaderiaId == id).FirstOrDefaultAsync();
+
+            return mercaderia;
+        }
+
+        public async Task<Mercaderia> GetByName(string nombre)
+        {
+            try
+            {
+                var mercaderia = await _context.Mercaderias.Where(m => m.Nombre == nombre).FirstOrDefaultAsync();
+                return mercaderia;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+
         public async Task<List<Mercaderia>> GetByTypeNameOrder(int? tipo, string? nombre, string orden)
         {
             var lista = new List<Mercaderia>();

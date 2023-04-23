@@ -31,6 +31,47 @@ namespace ProyectoSoftware.Application.Services
             return mercaderias;
         }
 
+        public async Task<MercaderiaResponse> GetById(int id)
+        {
+            MercaderiaResponse mercaderiaResponse = new MercaderiaResponse();
+
+            var mercaderia = await _query.GetById(id);
+
+            if (mercaderia != null)
+            {
+                mercaderiaResponse = new MercaderiaResponse
+                {
+                    id = mercaderia.MercaderiaId,
+                    nombre = mercaderia.Nombre,
+                    precio = mercaderia.Precio,
+                    tipo = new TipoMercaderiaResponse { id = mercaderia.TipoMercaderiaNavigation.TipoMercaderiaId, descripcion = mercaderia.TipoMercaderiaNavigation.Descripcion },
+                    imagen = mercaderia.Imagen,
+                    preparacion = mercaderia.Preparacion,
+                    ingredientes = mercaderia.Ingredientes
+                };
+            }
+            return mercaderiaResponse;
+        }
+
+        public async Task<MercaderiaGetResponse> GetByName(string name)
+        {
+            MercaderiaGetResponse mercaderiaResponse = new MercaderiaGetResponse();
+
+            var mercaderia = await _query.GetByName(name);
+            if (mercaderia != null)
+            {
+                mercaderiaResponse = new MercaderiaGetResponse
+                {
+                    id = mercaderia.MercaderiaId,
+                    nombre = mercaderia.Nombre,
+                    precio = mercaderia.Precio,
+                    tipo = new TipoMercaderiaResponse { id = mercaderia.TipoMercaderiaNavigation.TipoMercaderiaId, descripcion = mercaderia.TipoMercaderiaNavigation.Descripcion },
+                    imagen = mercaderia.Imagen
+                };
+            }
+                return mercaderiaResponse;
+        }
+
         public async Task<IEnumerable<MercaderiaGetResponse>> GetByTypeNameOrder(int? tipo, string? nombre, string orden)
         {
             List<MercaderiaGetResponse> listaDTO = new List<MercaderiaGetResponse>();
@@ -71,37 +112,44 @@ namespace ProyectoSoftware.Application.Services
 
             try
             {
-                Mercaderia mercaderia = new Mercaderia
-                {
-                    Nombre = mercaderiaRequest.nombre,
-                    TipoMercaderiaId = mercaderiaRequest.tipo,
-                    Precio = Convert.ToInt32(mercaderiaRequest.precio),
-                    Ingredientes = mercaderiaRequest.ingredientes,
-                    Preparacion = mercaderiaRequest.preparacion,
-                    Imagen = mercaderiaRequest.imagen
-                };
+                var mercaderiaName = await _query.GetByName(mercaderiaRequest.nombre);
 
-                var response = await _command.Insert(mercaderia);
-
-                if (response != null)
+                if (mercaderiaName == null)
                 {
-                    mercaderiaResponse = new MercaderiaResponse
+                    Mercaderia mercaderia = new Mercaderia
                     {
-                        id = response.MercaderiaId,
-                        nombre = response.Nombre,
-                        tipo = new TipoMercaderiaResponse { id = response.TipoMercaderiaId, descripcion = "" },
-                        precio = response.Precio,
-                        ingredientes = response.Ingredientes,
-                        imagen = response.Imagen,
-                        preparacion = response.Preparacion                    
+                        Nombre = mercaderiaRequest.nombre,
+                        TipoMercaderiaId = mercaderiaRequest.tipo,
+                        Precio = Convert.ToInt32(mercaderiaRequest.precio),
+                        Ingredientes = mercaderiaRequest.ingredientes,
+                        Preparacion = mercaderiaRequest.preparacion,
+                        Imagen = mercaderiaRequest.imagen
                     };
-                }
-                else
-                {
-                    mercaderiaResponse = null;
+
+                    var response = await _command.Insert(mercaderia);
+
+                    if (response != null)
+                    {
+                        mercaderiaResponse = new MercaderiaResponse
+                        {
+                            id = response.MercaderiaId,
+                            nombre = response.Nombre,
+                            tipo = new TipoMercaderiaResponse { id = response.TipoMercaderiaId, descripcion = "" },
+                            precio = response.Precio,
+                            ingredientes = response.Ingredientes,
+                            imagen = response.Imagen,
+                            preparacion = response.Preparacion
+                        };
+                    }
+                    else
+                    {
+                        mercaderiaResponse = null;
+                    }
+
+                    return mercaderiaResponse;
                 }
 
-                return mercaderiaResponse;
+                return null;
             }
             catch (Exception ex)
             {
