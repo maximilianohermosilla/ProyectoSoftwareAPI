@@ -78,7 +78,7 @@ namespace ProyectoSoftwareAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(List<MercaderiaResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MercaderiaResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
@@ -136,7 +136,6 @@ namespace ProyectoSoftwareAPI.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(MercaderiaResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(BadRequest), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Delete(int id)
         {
@@ -158,7 +157,7 @@ namespace ProyectoSoftwareAPI.Controllers
 
                 if (response.StatusCode == 404)
                 {
-                    return NotFound(new BadRequest { message = string.Format(@"No se pudo encontrar la mercaderia con id: {0}", id) });
+                    return Conflict(new BadRequest { message = string.Format(@"No se pudo encontrar la mercaderia con id: {0}", id) });
                 }
 
                 if (response.StatusCode == 400)

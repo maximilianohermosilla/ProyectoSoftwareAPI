@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using ProyectoSoftware.AccessData;
 using ProyectoSoftware.AccessData.Commands;
 using ProyectoSoftware.AccessData.Queries;
@@ -14,7 +15,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Swagger", Version = "1.0" });
+});
 
 //CONNECTION STRING
 var connectionString = builder.Configuration["ConnectionString"];
@@ -45,7 +49,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(x => { x.SwaggerEndpoint("/swagger/v1/swagger.yaml", "Swagger"); });
 }
 
 app.UseHttpsRedirection();

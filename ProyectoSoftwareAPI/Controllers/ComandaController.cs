@@ -16,7 +16,7 @@ namespace ProyectoSoftwareAPI.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<ComandaResponse>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(List<ComandaResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByDate(string fecha)
         {
@@ -58,7 +58,7 @@ namespace ProyectoSoftwareAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(List<ComandaGetResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ComandaGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(Guid id)
