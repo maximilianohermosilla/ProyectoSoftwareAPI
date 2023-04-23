@@ -134,17 +134,48 @@ namespace ProyectoSoftware.Application.Services
             return comandaResponse;
         }
 
-        public List<MercaderiaComandaResponse> GetListMercaderias(List<int> mercaderias)
+        public async Task<ComandaGetResponse> GetById(Guid id)
         {
-            List<MercaderiaComandaResponse> mercaderiasResponse = new List<MercaderiaComandaResponse>();
+            ComandaGetResponse comandaResponse = new ComandaGetResponse();
+            int total = 0;
 
-            foreach (int mercaderia in mercaderias)
+            var comanda = await _comandaQuery.GetById(id);
+
+            if (comanda == null)
             {
-
+                return null;
             }
+            else
+            {
+                comandaResponse.id = comanda.ComandaId;
+                comandaResponse.mercaderias = new List<MercaderiaGetResponse>();
+                comandaResponse.formaEntrega = new Domain.DTO.FormaEntrega();
+                comandaResponse.formaEntrega.id = comanda.FormaEntregaNavigation.FormaEntregaId;
+                comandaResponse.formaEntrega.descripcion = comanda.FormaEntregaNavigation.Descripcion;
+                comandaResponse.fecha = comanda.Fecha;
 
-            return mercaderiasResponse;
+                foreach (var mercaderia in comanda.ComandasMercaderia)
+                {
+                    MercaderiaGetResponse mercResponse = new MercaderiaGetResponse();
+                    mercResponse.id = mercaderia.MercaderiaNavigation.MercaderiaId;
+                    mercResponse.nombre = mercaderia.MercaderiaNavigation.Nombre;
+                    mercResponse.precio = mercaderia.MercaderiaNavigation.Precio;
+                    mercResponse.imagen = mercaderia.MercaderiaNavigation.Imagen;
+                    mercResponse.tipo = new TipoMercaderiaResponse
+                    {
+                        id = mercaderia.MercaderiaNavigation.TipoMercaderiaNavigation.TipoMercaderiaId,
+                        descripcion = mercaderia.MercaderiaNavigation.TipoMercaderiaNavigation.Descripcion
+                    };
 
+                    total += mercaderia.MercaderiaNavigation.Precio;
+
+                    comandaResponse.mercaderias?.Add(mercResponse);
+                }
+
+                comandaResponse.total = total;
+            }           
+
+            return comandaResponse;
         }
     }
 }

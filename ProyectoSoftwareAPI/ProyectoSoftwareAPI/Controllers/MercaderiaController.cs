@@ -17,6 +17,33 @@ namespace ProyectoSoftwareAPI.Controllers
             _service = service;
         }
 
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<MercaderiaGetResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetByTypeNameOrder(int? tipo, string? nombre, string orden = "ASC")
+        {
+            try
+            {
+                if (orden.ToUpper() == "DESC" || orden.ToUpper() == "ASC")
+                {
+                    var response = await _service.GetByTypeNameOrder(tipo, nombre, orden);
+                    if (response == null)
+                    {
+                        return BadRequest(new BadRequest { message = "No se ha encontrado una mercadería con los parámetros de búsqueda" });
+                    }
+                    return Ok(response);
+                }
+                else
+                {
+                    return BadRequest(new BadRequest { message = "El campo orden debe ser ASC o DESC" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(MercaderiaResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
@@ -39,31 +66,6 @@ namespace ProyectoSoftwareAPI.Controllers
             }
         }
 
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<MercaderiaGetResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetByTypeNameOrder(int? tipo, string? nombre, string orden = "ASC")
-        {
-            try
-            {
-                if (orden.ToUpper() == "DESC" || orden.ToUpper() == "ASC")
-                {
-                    var response = await _service.GetByTypeNameOrder(tipo, nombre, orden);
-                    if(response == null)
-                    {
-                        return BadRequest(new BadRequest { message = "No se ha encontrado una mercadería con los parámetros de búsqueda" });
-                    }
-                    return Ok(response);
-                }
-                else
-                {
-                    return BadRequest(new BadRequest { message = "El campo orden debe ser ASC o DESC" });
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new BadRequest { message = ex.Message });
-            }
-        }
+
     }
 }

@@ -18,7 +18,7 @@ namespace ProyectoSoftwareAPI.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<ComandaGetResponse>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(List<ComandaResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByDate(string fecha)
         {
@@ -53,21 +53,26 @@ namespace ProyectoSoftwareAPI.Controllers
             }
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll()
-        //{
-        //    try
-        //    {
-        //        var response = await _service.GetAll();
-        //        //var numero = int.Parse("2g");
-        //        //return new JsonResult(response) { StatusCode = 200 };
-        //        return Ok(response);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return new JsonResult(new { Message = e.Message }) { StatusCode = 400 };
-        //        //return BadRequest(e.Message);
-        //    }
-        //}
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(List<ComandaGetResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BadRequest), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            try
+            {
+                var response = await _service.GetById(id);
+
+                if (response == null)
+                {
+                    return NotFound(new BadRequest { message = string.Format(@"No se pudo encontrar la comanda {0}", id) });
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
     }
 }

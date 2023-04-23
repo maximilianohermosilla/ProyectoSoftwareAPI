@@ -43,7 +43,9 @@ namespace ProyectoSoftware.AccessData.Queries
 
         public async Task<Comanda> GetById(Guid id)
         {
-            var response = await _context.Comandas.Include(f => f.FormaEntregaNavigation).Include(e => e.ComandasMercaderia).ThenInclude(cm => cm.MercaderiaNavigation).Where(e => e.ComandaId == id).FirstOrDefaultAsync();
+            var response = await _context.Comandas.Include(f => f.FormaEntregaNavigation).Include(e => e.ComandasMercaderia)
+                                                   .ThenInclude(cm => cm.MercaderiaNavigation).ThenInclude(tm => tm.TipoMercaderiaNavigation)
+                                                   .Where(e => e.ComandaId == id).FirstOrDefaultAsync();
 
             return response;
         }
