@@ -88,5 +88,59 @@ namespace ProyectoSoftwareAPI.Controllers
             }
         }
 
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(MercaderiaResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BadRequest), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(BadRequest), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Update(MercaderiaRequest request, int id)
+        {
+            try
+            {
+                var response = await _service.Update(request, id);
+
+                if (response == null)
+                {
+                    return NotFound(new BadRequest { message = string.Format(@"No se pudo encontrar la mercaderia con id: {0}", id) });
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(MercaderiaResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BadRequest), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(BadRequest), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var existeComanda = await _service.ExisteComandaMercaderia(id);
+
+                if (existeComanda)
+                {
+                    return Conflict("No se puede eliminar la mercaderia porque existe en al menos una comanda");
+                }
+
+                var response = await _service.Delete( id);
+
+                if (response == null)
+                {
+                    return NotFound(new BadRequest { message = string.Format(@"No se pudo encontrar la mercaderia con id: {0}", id) });
+                }
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
     }
 }

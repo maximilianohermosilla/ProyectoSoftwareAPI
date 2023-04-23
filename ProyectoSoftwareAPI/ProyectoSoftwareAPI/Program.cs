@@ -34,6 +34,7 @@ builder.Services.AddTransient<ITipoMercaderiaQuery, TipoMercaderiaQuery>();
 builder.Services.AddTransient<IMercaderiaQuery, MercaderiaQuery>();
 builder.Services.AddTransient<IFormaEntregaQuery, FormaEntregaQuery>();
 builder.Services.AddTransient<IComandaQuery, ComandaQuery>();
+builder.Services.AddTransient<IComandaMercaderiaQuery, ComandaMercaderiaQuery>();
 
 builder.Services.AddTransient<ITipoMercaderiaCommand, TipoMercaderiaCommand>();
 builder.Services.AddTransient<IMercaderiaCommand, MercaderiaCommand>();

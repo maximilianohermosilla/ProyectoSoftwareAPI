@@ -3,6 +3,7 @@ using ProyectoSoftware.Domain.DTO;
 using ProyectoSoftware.Domain.ICommands;
 using ProyectoSoftware.Domain.IQueries;
 using ProyectoSoftware.Domain.Models;
+using System.Xml.Linq;
 
 namespace ProyectoSoftware.Application.Services
 {
@@ -10,11 +11,13 @@ namespace ProyectoSoftware.Application.Services
     {        
         private readonly IMercaderiaQuery _query;
         private readonly IMercaderiaCommand _command;
+        private readonly IComandaMercaderiaQuery _comandaMercaderiaQuery;
 
-        public MercaderiaService(IMercaderiaQuery query, IMercaderiaCommand command)
+        public MercaderiaService(IMercaderiaQuery query, IMercaderiaCommand command, IComandaMercaderiaQuery comandaMercaderiaQuery)
         {
             _query = query;
             _command = command;
+            _comandaMercaderiaQuery = comandaMercaderiaQuery;
         }
 
         public async Task<List<Mercaderia>> GetAll()
@@ -69,7 +72,8 @@ namespace ProyectoSoftware.Application.Services
                     imagen = mercaderia.Imagen
                 };
             }
-                return mercaderiaResponse;
+
+            return mercaderiaResponse;
         }
 
         public async Task<IEnumerable<MercaderiaGetResponse>> GetByTypeNameOrder(int? tipo, string? nombre, string orden)
@@ -156,5 +160,99 @@ namespace ProyectoSoftware.Application.Services
                 return null;
             }
         }
+
+        public async Task<MercaderiaResponse> Update(MercaderiaRequest mercaderiaRequest, int id)
+        {
+            MercaderiaResponse mercaderiaResponse = new MercaderiaResponse();
+
+            try
+            {
+                var mercaderiaUpdate = await _query.GetById(id);
+
+                if (mercaderiaUpdate != null)
+                {
+                    mercaderiaUpdate.Nombre = mercaderiaRequest.nombre;
+                    mercaderiaUpdate.TipoMercaderiaId = mercaderiaRequest.tipo;
+                    mercaderiaUpdate.Precio = Convert.ToInt32(mercaderiaRequest.precio);
+                    mercaderiaUpdate.Ingredientes = mercaderiaRequest.ingredientes;
+                    mercaderiaUpdate.Preparacion = mercaderiaRequest.preparacion;
+                    mercaderiaUpdate.Imagen = mercaderiaRequest.imagen;
+
+                    var response = await _command.Update(mercaderiaUpdate);
+
+                    if (response != null)
+                    {
+                        mercaderiaResponse = new MercaderiaResponse
+                        {
+                            id = response.MercaderiaId,
+                            nombre = response.Nombre,
+                            tipo = new TipoMercaderiaResponse { id = response.TipoMercaderiaId, descripcion = "" },
+                            precio = response.Precio,
+                            ingredientes = response.Ingredientes,
+                            imagen = response.Imagen,
+                            preparacion = response.Preparacion
+                        };
+                    }
+                    else
+                    {
+                        mercaderiaResponse = null;
+                    }
+
+                    return mercaderiaResponse;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<MercaderiaResponse> Delete(int id)
+        {
+            MercaderiaResponse mercaderiaResponse = new MercaderiaResponse();
+
+            var mercaderiaUpdate = await _query.GetById(id);           
+
+            if (mercaderiaUpdate != null)
+            {
+                mercaderiaResponse = new MercaderiaResponse
+                {
+                    id = mercaderiaUpdate.MercaderiaId,
+                    nombre = mercaderiaUpdate.Nombre,
+                    precio = mercaderiaUpdate.Precio,
+                    tipo = new TipoMercaderiaResponse { id = mercaderiaUpdate.TipoMercaderiaNavigation.TipoMercaderiaId, descripcion = mercaderiaUpdate.TipoMercaderiaNavigation.Descripcion },
+                    imagen = mercaderiaUpdate.Imagen,
+                    preparacion = mercaderiaUpdate.Preparacion,
+                    ingredientes = mercaderiaUpdate.Ingredientes
+                };
+
+                await _command.Delete(mercaderiaUpdate);
+
+                return mercaderiaResponse;
+            } 
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> ExisteComandaMercaderia(int id)
+        {
+            var comandasMercaderia = await _comandaMercaderiaQuery.GetByMercaderiaId(id);
+
+            if (comandasMercaderia.Any())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }
