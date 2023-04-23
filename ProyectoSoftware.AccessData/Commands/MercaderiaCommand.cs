@@ -13,48 +13,26 @@ namespace ProyectoSoftware.AccessData.Commands
         }
 
         public async Task<Mercaderia> Insert(Mercaderia mercaderia)
-        {
-            try
-            {
-                _context.Add(mercaderia);
-                await _context.SaveChangesAsync();                
-                return mercaderia;
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
-
-                return null;
-            }
+        {            
+            _context.Add(mercaderia);
+            await _context.SaveChangesAsync();    
+            
+            return mercaderia;            
         }
 
 
         public async Task Delete(Mercaderia mercaderia)
         {
-            try
-            {
-                _context.Mercaderias.Remove(mercaderia);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
-            }
+            _context.Mercaderias.Remove(mercaderia);
+            await _context.SaveChangesAsync();            
         }
+
         public async Task<Mercaderia> Update(Mercaderia mercaderia)
         {
-            try
-            {
-                _context.Mercaderias.Update(mercaderia);
-                await _context.SaveChangesAsync();
-                return mercaderia;
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
+            _context.Mercaderias.Update(mercaderia);
+            await _context.SaveChangesAsync();
 
-                return null;
-            }
+            return mercaderia;            
         }
     }
 }

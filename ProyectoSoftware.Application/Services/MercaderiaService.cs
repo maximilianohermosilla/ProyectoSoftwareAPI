@@ -9,32 +9,45 @@ namespace ProyectoSoftware.Application.Services
     public class MercaderiaService: IMercaderiaService
     {        
         private readonly IMercaderiaQuery _query;
+        private readonly ITipoMercaderiaQuery _tipoMercaderiaQuery;
         private readonly IMercaderiaCommand _command;
         private readonly IComandaMercaderiaQuery _comandaMercaderiaQuery;
 
-        public MercaderiaService(IMercaderiaQuery query, IMercaderiaCommand command, IComandaMercaderiaQuery comandaMercaderiaQuery)
+        public MercaderiaService(IMercaderiaQuery query, IMercaderiaCommand command, IComandaMercaderiaQuery comandaMercaderiaQuery, ITipoMercaderiaQuery tipoMercaderiaQuery)
         {
             _query = query;
             _command = command;
             _comandaMercaderiaQuery = comandaMercaderiaQuery;
+            _tipoMercaderiaQuery = tipoMercaderiaQuery; 
         }
 
-        public async Task<List<Mercaderia>> GetAll()
+        public async Task<ResponseModel> GetAll()
         {
+            ResponseModel response = new ResponseModel();
             var mercaderias = await _query.GetAll();
 
-            return mercaderias;
+            response.message = "Consulta realizada correctamente";
+            response.StatusCode = 200;
+            response.response = mercaderias;
+
+            return response;
         }
 
-        public async Task<List<Mercaderia>> GetAllByType(int tipoMercaderiaId)
+        public async Task<ResponseModel> GetAllByType(int tipoMercaderiaId)
         {
+            ResponseModel response = new ResponseModel();
             var mercaderias = await _query.GetAllByType(tipoMercaderiaId);
 
-            return mercaderias;
+            response.message = "Consulta realizada correctamente";
+            response.StatusCode = 200;
+            response.response = mercaderias;
+
+            return response;
         }
 
-        public async Task<MercaderiaResponse> GetById(int id)
+        public async Task<ResponseModel> GetById(int id)
         {
+            ResponseModel response = new ResponseModel();
             MercaderiaResponse mercaderiaResponse = new MercaderiaResponse();
 
             var mercaderia = await _query.GetById(id);
@@ -51,12 +64,24 @@ namespace ProyectoSoftware.Application.Services
                     preparacion = mercaderia.Preparacion,
                     ingredientes = mercaderia.Ingredientes
                 };
+
+                response.message = "Consulta realizada correctamente";
+                response.StatusCode = 200;
+                response.response = mercaderiaResponse;
+
+                return response;
             }
-            return mercaderiaResponse;
+
+            response.message = "No se encontró la mercadería seleccionada";
+            response.StatusCode = 404;
+            response.response = null;
+
+            return response;
         }
 
-        public async Task<MercaderiaGetResponse> GetByName(string name)
+        public async Task<ResponseModel> GetByName(string name)
         {
+            ResponseModel response = new ResponseModel();
             MercaderiaGetResponse mercaderiaResponse = new MercaderiaGetResponse();
 
             var mercaderia = await _query.GetByName(name);
@@ -70,19 +95,37 @@ namespace ProyectoSoftware.Application.Services
                     tipo = new TipoMercaderiaResponse { id = mercaderia.TipoMercaderiaNavigation.TipoMercaderiaId, descripcion = mercaderia.TipoMercaderiaNavigation.Descripcion },
                     imagen = mercaderia.Imagen
                 };
+
+                response.message = "Consulta realizada correctamente";
+                response.StatusCode = 200;
+                response.response = mercaderiaResponse;
             }
 
-            return mercaderiaResponse;
+            response.message = "No se encontró la mercadería seleccionada";
+            response.StatusCode = 404;
+            response.response = null;
+
+            return response;
         }
 
-        public async Task<IEnumerable<MercaderiaGetResponse>> GetByTypeNameOrder(int? tipo, string? nombre, string orden)
+        public async Task<ResponseModel> GetByTypeNameOrder(int? tipo, string? nombre, string orden)
         {
+            ResponseModel response = new ResponseModel();
             List<MercaderiaGetResponse> listaDTO = new List<MercaderiaGetResponse>();
 
             try
             { 
                 orden = orden.ToUpper() == "DESC" ? "DESC" : "ASC";
                 var lista = await _query.GetByTypeNameOrder(tipo, nombre, orden);
+
+                if (!lista.Any())
+                {
+                    response.message = "No se encontró ninguna mercadería con los parámetros ingresados";
+                    response.StatusCode = 404;
+                    response.response = null;
+
+                    return response;
+                }
 
                 foreach (var mercaderia in lista)
                 {
@@ -99,25 +142,62 @@ namespace ProyectoSoftware.Application.Services
 
                         listaDTO.Add(mercaderiaResponse);
                     }
-                }    
-                
-                return listaDTO;
+                }
+
+                response.message = "Consulta realizada correctamente";
+                response.StatusCode = 200;
+                response.response = listaDTO;
+
+                return response;
             }
             catch (Exception ex)
             {
-                return null;
+                response.message = ex.Message;
+                response.StatusCode = 400;
+                response.response = null;
+
+                return response;
             }
         }
 
-        public async Task<MercaderiaResponse> Insert(MercaderiaRequest mercaderiaRequest)
+        public async Task<ResponseModel> Insert(MercaderiaRequest mercaderiaRequest)
         {
+            ResponseModel response = new ResponseModel();
             MercaderiaResponse mercaderiaResponse = new MercaderiaResponse();
 
             try
             {
+                if (mercaderiaRequest.precio <= 0)
+                {
+                    response.message = "El precio debe ser mayor a 0";
+                    response.StatusCode = 409;
+                    response.response = null;
+
+                    return response;
+                }
+
+                var tipoMercaderia = await _tipoMercaderiaQuery.GetById(mercaderiaRequest.tipo);
+
+                if (tipoMercaderia == null)
+                {
+                    response.message = "No existe el tipo de mercaderia seleccionado";
+                    response.StatusCode = 409;
+                    response.response = null;
+
+                    return response;
+                }
+
                 var mercaderiaName = await _query.GetByName(mercaderiaRequest.nombre);
 
-                if (mercaderiaName == null)
+                if (mercaderiaName != null)
+                {
+                    response.message = "Ya existe una mercaderia con el nombre ingresado";
+                    response.StatusCode = 409;
+                    response.response = null;
+
+                    return response;
+                }
+                else
                 {
                     Mercaderia mercaderia = new Mercaderia
                     {
@@ -129,44 +209,88 @@ namespace ProyectoSoftware.Application.Services
                         Imagen = mercaderiaRequest.imagen
                     };
 
-                    var response = await _command.Insert(mercaderia);
+                    var responseCommand = await _command.Insert(mercaderia);
 
-                    if (response != null)
+                    if (responseCommand == null)
                     {
-                        mercaderiaResponse = new MercaderiaResponse
-                        {
-                            id = response.MercaderiaId,
-                            nombre = response.Nombre,
-                            tipo = new TipoMercaderiaResponse { id = response.TipoMercaderiaId, descripcion = "" },
-                            precio = response.Precio,
-                            ingredientes = response.Ingredientes,
-                            imagen = response.Imagen,
-                            preparacion = response.Preparacion
-                        };
+                        response.message = "Ocurrió un error al insertar la comanda. Revise los parámetros";
+                        response.StatusCode = 409;
+                        response.response = null;
                     }
                     else
                     {
-                        mercaderiaResponse = null;
+                        mercaderiaResponse = new MercaderiaResponse
+                        {
+                            id = responseCommand.MercaderiaId,
+                            nombre = responseCommand.Nombre,
+                            tipo = new TipoMercaderiaResponse { id = responseCommand.TipoMercaderiaId, descripcion = tipoMercaderia.Descripcion },
+                            precio = responseCommand.Precio,
+                            ingredientes = responseCommand.Ingredientes,
+                            imagen = responseCommand.Imagen,
+                            preparacion = responseCommand.Preparacion
+                        };
                     }
 
-                    return mercaderiaResponse;
+                    response.message = "Mercaderia ingresada correctamente";
+                    response.StatusCode = 200;
+                    response.response = mercaderiaResponse;
+
+                    return response;
                 }
 
-                return null;
             }
             catch (Exception ex)
             {
-                return null;
+                response.message = ex.Message;
+                response.StatusCode = 400;
+                response.response = null;
+
+                return response;
             }
         }
 
-        public async Task<MercaderiaResponse> Update(MercaderiaRequest mercaderiaRequest, int id)
+        public async Task<ResponseModel> Update(MercaderiaRequest mercaderiaRequest, int id)
         {
+            ResponseModel response = new ResponseModel();
             MercaderiaResponse mercaderiaResponse = new MercaderiaResponse();
 
             try
             {
                 var mercaderiaUpdate = await _query.GetById(id);
+
+                if (mercaderiaRequest.precio <= 0)
+                {
+                    response.message = "El precio debe ser mayor a 0";
+                    response.StatusCode = 409;
+                    response.response = null;
+
+                    return response;
+                }
+
+                var tipoMercaderia = await _tipoMercaderiaQuery.GetById(mercaderiaRequest.tipo);
+
+                if (tipoMercaderia == null)
+                {
+                    response.message = "No existe el tipo de mercaderia seleccionado";
+                    response.StatusCode = 409;
+                    response.response = null;
+
+                    return response;
+                }
+
+                //Si el nombre ingresado es distinto al nombre que tenía la mercaderia, valido que no se repita
+                if (mercaderiaRequest.nombre != mercaderiaUpdate.Nombre)
+                {
+                    var mercaderiaName = await _query.GetByName(mercaderiaRequest.nombre);
+                    if (mercaderiaName != null)
+                    {
+                        response.message = "Ya existe otra mercaderia con el nombre ingresado";
+                        response.StatusCode = 409;
+                        response.response = null;
+
+                        return response;
+                    }
+                }
 
                 if (mercaderiaUpdate != null)
                 {
@@ -177,80 +301,120 @@ namespace ProyectoSoftware.Application.Services
                     mercaderiaUpdate.Preparacion = mercaderiaRequest.preparacion;
                     mercaderiaUpdate.Imagen = mercaderiaRequest.imagen;
 
-                    var response = await _command.Update(mercaderiaUpdate);
+                    var responseUpdate = await _command.Update(mercaderiaUpdate);
 
-                    if (response != null)
+                    if (responseUpdate != null)
                     {
                         mercaderiaResponse = new MercaderiaResponse
                         {
-                            id = response.MercaderiaId,
-                            nombre = response.Nombre,
-                            tipo = new TipoMercaderiaResponse { id = response.TipoMercaderiaId, descripcion = "" },
-                            precio = response.Precio,
-                            ingredientes = response.Ingredientes,
-                            imagen = response.Imagen,
-                            preparacion = response.Preparacion
+                            id = responseUpdate.MercaderiaId,
+                            nombre = responseUpdate.Nombre,
+                            tipo = new TipoMercaderiaResponse { id = responseUpdate.TipoMercaderiaId, descripcion = "" },
+                            precio = responseUpdate.Precio,
+                            ingredientes = responseUpdate.Ingredientes,
+                            imagen = responseUpdate.Imagen,
+                            preparacion = responseUpdate.Preparacion
                         };
                     }
                     else
                     {
-                        mercaderiaResponse = null;
+                        response.message = "Ocurrió un error al actualizar la mercadería";
+                        response.StatusCode = 400;
+                        response.response = null;
+
+                        return response;
                     }
 
-                    return mercaderiaResponse;
+                    response.message = "Mercaderia actualizada correctamente";
+                    response.StatusCode = 200;
+                    response.response = mercaderiaResponse;
+
+                    return response;
                 }
                 else
                 {
-                    return null;
+                    response.message = "No se ha encontrado la mercaderia seleccionada";
+                    response.StatusCode = 404;
+                    response.response = null;
+
+                    return response;
                 }
             }
             catch (Exception ex)
             {
-                return null;
+                response.message = ex.Message;
+                response.StatusCode = 400;
+                response.response = null;
+
+                return response;
             }
         }
 
-        public async Task<MercaderiaResponse> Delete(int id)
+        public async Task<ResponseModel> Delete(int id)
         {
+            ResponseModel response = new ResponseModel();
             MercaderiaResponse mercaderiaResponse = new MercaderiaResponse();
 
-            var mercaderiaUpdate = await _query.GetById(id);           
-
-            if (mercaderiaUpdate != null)
+            try
             {
-                mercaderiaResponse = new MercaderiaResponse
+                var mercaderia = await _query.GetById(id);
+
+                if (mercaderia == null)
                 {
-                    id = mercaderiaUpdate.MercaderiaId,
-                    nombre = mercaderiaUpdate.Nombre,
-                    precio = mercaderiaUpdate.Precio,
-                    tipo = new TipoMercaderiaResponse { id = mercaderiaUpdate.TipoMercaderiaNavigation.TipoMercaderiaId, descripcion = mercaderiaUpdate.TipoMercaderiaNavigation.Descripcion },
-                    imagen = mercaderiaUpdate.Imagen,
-                    preparacion = mercaderiaUpdate.Preparacion,
-                    ingredientes = mercaderiaUpdate.Ingredientes
-                };
+                    response.message = "No se ha encontrado la mercaderia seleccionada";
+                    response.StatusCode = 404;
+                    response.response = null;
 
-                await _command.Delete(mercaderiaUpdate);
+                    return response;
+                }
+                else
+                {
+                    bool existenComandas = await ExisteComandaMercaderia(id);
 
-                return mercaderiaResponse;
-            } 
-            else
+                    if (existenComandas)
+                    {
+                        response.message = "No se puede eliminar la mercadería porque existe en al menos una comanda";
+                        response.StatusCode = 409;
+                        response.response = null;
+
+                        return response;
+                    }
+
+                    mercaderiaResponse = new MercaderiaResponse
+                    {
+                        id = mercaderia.MercaderiaId,
+                        nombre = mercaderia.Nombre,
+                        precio = mercaderia.Precio,
+                        tipo = new TipoMercaderiaResponse { id = mercaderia.TipoMercaderiaNavigation.TipoMercaderiaId, descripcion = mercaderia.TipoMercaderiaNavigation.Descripcion },
+                        imagen = mercaderia.Imagen,
+                        preparacion = mercaderia.Preparacion,
+                        ingredientes = mercaderia.Ingredientes
+                    };
+
+                    await _command.Delete(mercaderia);
+
+                    response.message = "Mercaderia eliminada correctamente";
+                    response.StatusCode = 200;
+                    response.response = mercaderiaResponse;
+
+                    return response;
+                }
+            }
+            catch (Exception ex)
             {
-                return null;
+                response.message = ex.Message;
+                response.StatusCode = 400;
+                response.response = null;
+
+                return response;
             }
         }
 
         public async Task<bool> ExisteComandaMercaderia(int id)
-        {
+        {            
             var comandasMercaderia = await _comandaMercaderiaQuery.GetByMercaderiaId(id);
 
-            if (comandasMercaderia.Any())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return comandasMercaderia.Any();
         }
 
     }

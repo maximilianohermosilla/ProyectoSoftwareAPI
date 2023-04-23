@@ -6,5 +6,6 @@ namespace ProyectoSoftware.Application.Interfaces.ICommands
     {
         Task<Comanda> Insert(Comanda comanda);
         Task<Comanda> Update(Comanda comanda);
+        Task Delete(Comanda comanda);
     }
 }

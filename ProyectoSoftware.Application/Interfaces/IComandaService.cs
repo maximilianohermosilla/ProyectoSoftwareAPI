@@ -4,8 +4,8 @@ namespace ProyectoSoftware.Application.Interfaces
 {
     public interface IComandaService
     {
-        Task<List<ComandaResponse>> GetByDate(string fecha);
-        Task<ComandaGetResponse> GetById(Guid id);
-        Task<ComandaResponse> Insert(List<int> mercaderias, int formaEntrega);
+        Task<ResponseModel> GetByDate(string fecha);
+        Task<ResponseModel> GetById(Guid id);
+        Task<ResponseModel> Insert(List<int> mercaderias, int formaEntrega);
     }
 }

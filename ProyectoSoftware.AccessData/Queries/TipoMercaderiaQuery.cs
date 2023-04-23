@@ -19,5 +19,12 @@ namespace ProyectoSoftware.AccessData.Queries
 
             return lista;
         }
+
+        public async Task<TipoMercaderia> GetById(int id)
+        {
+            var tipo = await context.TiposMercaderia.Where(m => m.TipoMercaderiaId == id).FirstOrDefaultAsync();
+
+            return tipo;
+        }
     }
 }

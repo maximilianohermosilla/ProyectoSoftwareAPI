@@ -23,7 +23,13 @@ namespace ProyectoSoftwareAPI.Controllers
             try
             {
                 var response = await _service.GetByDate(fecha);
-                return Ok(response);
+
+                if (response.StatusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
@@ -39,11 +45,11 @@ namespace ProyectoSoftwareAPI.Controllers
             try
             {
                 var response = await _service.Insert(request.mercaderias, request.formaEntrega);
-                if (response == null)
+                if (response.response == null)
                 {
-                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar la comanda. Revise las mercaderias y forma de entrega ingresadas" });
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar la comanda. Revise las mercaderias y forma de entrega ingresadas. " });
                 }
-                return Created("", response);
+                return Created("", response.response);
             }
             catch (Exception ex)
             {
@@ -61,11 +67,17 @@ namespace ProyectoSoftwareAPI.Controllers
             {
                 var response = await _service.GetById(id);
 
-                if (response == null)
+                if (response.StatusCode == 404)
                 {
                     return NotFound(new BadRequest { message = string.Format(@"No se pudo encontrar la comanda {0}", id) });
                 }
-                return Ok(response);
+
+                if (response.StatusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
             }
             catch (Exception ex)
             {

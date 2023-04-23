@@ -25,11 +25,18 @@ namespace ProyectoSoftwareAPI.Controllers
                 if (orden.ToUpper() == "DESC" || orden.ToUpper() == "ASC")
                 {
                     var response = await _service.GetByTypeNameOrder(tipo, nombre, orden);
-                    if (response == null)
+
+
+                    if (response.StatusCode == 404)
                     {
-                        return BadRequest(new BadRequest { message = "No se ha encontrado una mercadería con los parámetros de búsqueda" });
+                        return NotFound(new BadRequest { message = response.message });
                     }
-                    return Ok(response);
+                    if (response.StatusCode == 400)
+                    {
+                        return BadRequest(new BadRequest { message = response.message });
+                    }
+
+                    return Ok(response.response);
                 }
                 else
                 {
@@ -51,12 +58,18 @@ namespace ProyectoSoftwareAPI.Controllers
             try
             {
                 var response = await _service.Insert(request);
-                if (response == null)
+
+                if (response.StatusCode == 409)
                 {
-                    //return new JsonResult(new { message = "Se ha generado un conflicto. Verifique los datos ingresados" }) { StatusCode = 409 };
-                    return Conflict(new { message = "Se ha generado un conflicto. El nombre ya existe o se ha ingresado un parámetro inválido" });
+                    return Conflict(new BadRequest { message = response.message });
                 }
-                return Created("", response);
+
+                if (response.response == null)
+                {
+                    return BadRequest(new { message = "Ocurrió un error al insertar la mercadería. " + response.message });
+                }
+
+                return Created("", response.response);
             }
             catch (Exception ex)
             {    
@@ -74,11 +87,11 @@ namespace ProyectoSoftwareAPI.Controllers
             {
                 var response = await _service.GetById(id);
 
-                if (response == null)
+                if (response.response == null)
                 {
                     return NotFound(new BadRequest { message = string.Format(@"No se pudo encontrar la mercaderia con id: {0}", id) });
                 }
-                return Ok(response);
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
@@ -97,11 +110,22 @@ namespace ProyectoSoftwareAPI.Controllers
             {
                 var response = await _service.Update(request, id);
 
-                if (response == null)
+                if (response.StatusCode == 409)
+                {
+                    return Conflict(new BadRequest { message = response.message });
+                }
+
+                if (response.StatusCode == 404)
                 {
                     return NotFound(new BadRequest { message = string.Format(@"No se pudo encontrar la mercaderia con id: {0}", id) });
                 }
-                return Ok(response);
+
+                if (response.StatusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
@@ -125,14 +149,24 @@ namespace ProyectoSoftwareAPI.Controllers
                     return Conflict("No se puede eliminar la mercaderia porque existe en al menos una comanda");
                 }
 
-                var response = await _service.Delete( id);
+                var response = await _service.Delete(id);
 
-                if (response == null)
+                if (response.StatusCode == 409)
+                {
+                    return Conflict(new BadRequest { message = response.message });
+                }
+
+                if (response.StatusCode == 404)
                 {
                     return NotFound(new BadRequest { message = string.Format(@"No se pudo encontrar la mercaderia con id: {0}", id) });
                 }
 
-                return Ok(response);
+                if (response.StatusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
             }
             catch (Exception ex)
             {

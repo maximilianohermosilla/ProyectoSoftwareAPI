@@ -9,22 +9,36 @@ namespace ProyectoSoftware.Application.Services
     public class ComandaService: IComandaService
     {        
         private readonly IComandaQuery _comandaQuery;
+        private readonly IMercaderiaQuery _mercaderiaQuery;
         private readonly IComandaCommand _comandaCommand;
         private readonly IComandaMercaderiaCommand _comandaMercaderiaCommand;
 
-        public ComandaService(IComandaQuery comandaQuery, IComandaCommand comandaCommand, IComandaMercaderiaCommand comandaMercaderiaCommand)
+        public ComandaService(IComandaQuery comandaQuery, IComandaCommand comandaCommand, IComandaMercaderiaCommand comandaMercaderiaCommand, IMercaderiaQuery mercaderiaQuery)
         {
             _comandaQuery = comandaQuery;
+            _mercaderiaQuery = mercaderiaQuery;
             _comandaCommand = comandaCommand;
             _comandaMercaderiaCommand = comandaMercaderiaCommand;
         }
 
-        public async Task<List<ComandaResponse>> GetByDate(string fecha)
+        public async Task<ResponseModel> GetByDate(string fecha)
         {            
+            ResponseModel response = new ResponseModel();
             List<ComandaResponse> listaDTO = new List<ComandaResponse>();
             try
             {
                 DateTime date = Convert.ToDateTime(fecha);
+
+                DateTime hoy = DateTime.Now;
+
+                if (date > hoy)
+                {
+                    response.StatusCode = 400;
+                    response.message = "La fecha ingresada debe ser inferior a la fecha actual";
+                    response.response = null;
+                    return response;
+                }
+
                 int total = 0;
 
                 var lista = await _comandaQuery.GetByDate(date);
@@ -54,44 +68,64 @@ namespace ProyectoSoftware.Application.Services
 
                     listaDTO.Add(comandaResponse);
                 }
-                
-                return listaDTO;
+
+                response.message = "Consulta realizada correctamente";
+                response.StatusCode = 200;
+                response.response = listaDTO;
+                return response;
 
             }
-            catch (FormatException e)
+            catch (FormatException ex)
             {
                 throw new Exception("Formato de fecha incorrecta. Ingrese una fecha válida con formato DD/MM/AAAA o AAAA/MM/DD");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new Exception(e.Message);
+                response.StatusCode = 400;
+                response.message = ex.Message;
+                response.response = null;
+
+                return response;
             }
         }
 
-        public async Task<ComandaResponse> Insert(List<int> mercaderias, int formaEntrega)
+        public async Task<ResponseModel> Insert(List<int> mercaderias, int formaEntrega)
         {
+            ResponseModel response = new ResponseModel();
             ComandaResponse comandaResponse = new ComandaResponse();
+            Comanda comanda = new Comanda();
             try
             {
-                Comanda comanda = new Comanda();
                 comanda.FormaEntregaId = formaEntrega;
                 comanda.Fecha = DateTime.Now;
 
-                var response = await _comandaCommand.Insert(comanda);
-
-                //Insertar ComandasMercaderias con el Guid de la nueva Comanda
-                foreach (var item in mercaderias)
-                {
-                    ComandaMercaderia comandaMercaderia = new ComandaMercaderia();
-                    comandaMercaderia.MercaderiaId = item;
-                    comandaMercaderia.ComandaId = response.ComandaId;
-
-                    await _comandaMercaderiaCommand.Insert(comandaMercaderia);
-                }                
+                var responseInsert = await _comandaCommand.Insert(comanda);            
                 
-                if (response != null)
-                {                    
-                    var getComanda = await _comandaQuery.GetById(response.ComandaId);
+                if (responseInsert != null)
+                {
+                    //Insertar ComandasMercaderias con el Guid de la nueva Comanda
+                    try
+                    {
+                        foreach (var item in mercaderias)
+                        {
+                            ComandaMercaderia comandaMercaderia = new ComandaMercaderia();
+                            comandaMercaderia.MercaderiaId = item;
+                            comandaMercaderia.ComandaId = responseInsert.ComandaId;
+
+                            await _comandaMercaderiaCommand.Insert(comandaMercaderia);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        //await _comandaMercaderiaCommand.DeleteByComandaId(comanda.ComandaId);
+                        await _comandaCommand.Delete(comanda);
+                        response.StatusCode = 400;
+                        response.message = "Ocurrió un error con una de las mercaderias seleccionadas";
+                        response.response = null;
+                        return response;
+                    }                    
+
+                    var getComanda = await _comandaQuery.GetById(responseInsert.ComandaId);
                     List<MercaderiaComandaResponse> mercaderiasResponse = new List<MercaderiaComandaResponse>();
                     int total = 0;
 
@@ -118,54 +152,90 @@ namespace ProyectoSoftware.Application.Services
             }
             catch (Exception ex)
             {
-                return null;
-            }            
+                await _comandaCommand.Delete(comanda);
+                response.StatusCode = 400;
+                response.message = ex.Message;
+                response.response = null;
+                return response;
+            }
 
-            return comandaResponse;
+            response.StatusCode = 201;
+            response.message = "Comanda insertada exitosamente";
+            response.response = comandaResponse;
+            return response;
         }
 
-        public async Task<ComandaGetResponse> GetById(Guid id)
+        public async Task<ResponseModel> GetById(Guid id)
         {
+            ResponseModel response = new ResponseModel();
             ComandaGetResponse comandaResponse = new ComandaGetResponse();
             int total = 0;
 
-            var comanda = await _comandaQuery.GetById(id);
-
-            if (comanda == null)
+            try
             {
-                return null;
-            }
-            else
-            {
-                comandaResponse.id = comanda.ComandaId;
-                comandaResponse.mercaderias = new List<MercaderiaGetResponse>();
-                comandaResponse.formaEntrega = new Application.DTO.FormaEntrega();
-                comandaResponse.formaEntrega.id = comanda.FormaEntregaNavigation.FormaEntregaId;
-                comandaResponse.formaEntrega.descripcion = comanda.FormaEntregaNavigation.Descripcion;
-                comandaResponse.fecha = comanda.Fecha;
+                var comanda = await _comandaQuery.GetById(id);
 
-                foreach (var mercaderia in comanda.ComandasMercaderia)
+                if (comanda == null)
                 {
-                    MercaderiaGetResponse mercResponse = new MercaderiaGetResponse();
-                    mercResponse.id = mercaderia.MercaderiaNavigation.MercaderiaId;
-                    mercResponse.nombre = mercaderia.MercaderiaNavigation.Nombre;
-                    mercResponse.precio = mercaderia.MercaderiaNavigation.Precio;
-                    mercResponse.imagen = mercaderia.MercaderiaNavigation.Imagen;
-                    mercResponse.tipo = new TipoMercaderiaResponse
+                    response.StatusCode = 404;
+                    response.message = "No se encontró la comanda con id: " + id.ToString();
+                    response.response = null;
+                    return response;
+                }
+                else
+                {
+                    comandaResponse.id = comanda.ComandaId;
+                    comandaResponse.mercaderias = new List<MercaderiaGetResponse>();
+                    comandaResponse.formaEntrega = new Application.DTO.FormaEntrega();
+                    comandaResponse.formaEntrega.id = comanda.FormaEntregaNavigation.FormaEntregaId;
+                    comandaResponse.formaEntrega.descripcion = comanda.FormaEntregaNavigation.Descripcion;
+                    comandaResponse.fecha = comanda.Fecha;
+
+                    foreach (var mercaderia in comanda.ComandasMercaderia)
                     {
-                        id = mercaderia.MercaderiaNavigation.TipoMercaderiaNavigation.TipoMercaderiaId,
-                        descripcion = mercaderia.MercaderiaNavigation.TipoMercaderiaNavigation.Descripcion
-                    };
+                        MercaderiaGetResponse mercResponse = new MercaderiaGetResponse();
+                        mercResponse.id = mercaderia.MercaderiaNavigation.MercaderiaId;
+                        mercResponse.nombre = mercaderia.MercaderiaNavigation.Nombre;
+                        mercResponse.precio = mercaderia.MercaderiaNavigation.Precio;
+                        mercResponse.imagen = mercaderia.MercaderiaNavigation.Imagen;
+                        mercResponse.tipo = new TipoMercaderiaResponse
+                        {
+                            id = mercaderia.MercaderiaNavigation.TipoMercaderiaNavigation.TipoMercaderiaId,
+                            descripcion = mercaderia.MercaderiaNavigation.TipoMercaderiaNavigation.Descripcion
+                        };
 
-                    total += mercaderia.MercaderiaNavigation.Precio;
+                        total += mercaderia.MercaderiaNavigation.Precio;
 
-                    comandaResponse.mercaderias?.Add(mercResponse);
+                        comandaResponse.mercaderias?.Add(mercResponse);
+                    }
+
+                    comandaResponse.total = total;
                 }
 
-                comandaResponse.total = total;
-            }           
+                response.StatusCode = 200;
+                response.message = "Se encontró la comanda";
+                response.response = comandaResponse;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = 400;
+                response.message = ex.Message;
+                response.response = null;
+                return response;
+            }
+        }
 
-            return comandaResponse;
+        public async Task<bool> ValidateListMercaderias(List<int> mercaderias)
+        {
+            foreach (int id in mercaderias)
+            {
+                var response = await _mercaderiaQuery.GetById(id);
+                if (response == null) 
+                    return false;
+            }
+
+            return true;
         }
     }
 }

@@ -26,5 +26,11 @@ namespace ProyectoSoftware.AccessData.Commands
 
             return comanda;
         }
+
+        public async Task Delete(Comanda comanda)
+        {
+            _context.Remove(comanda);
+            await _context.SaveChangesAsync();
+        }
     }
 }
