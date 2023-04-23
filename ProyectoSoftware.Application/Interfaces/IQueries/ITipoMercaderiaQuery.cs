@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProyectoSoftware.Domain.IQueries
+namespace ProyectoSoftware.Application.Interfaces.IQueries
 {
     public interface ITipoMercaderiaQuery
     {

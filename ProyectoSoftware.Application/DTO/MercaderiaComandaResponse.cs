@@ -1,4 +1,4 @@
-﻿namespace ProyectoSoftware.Domain.DTO
+﻿namespace ProyectoSoftware.Application.DTO
 {
     public class MercaderiaComandaResponse
     {

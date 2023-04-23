@@ -1,11 +1,8 @@
 ﻿using ProyectoSoftware.Application.Interfaces;
-using ProyectoSoftware.Domain.DTO;
-using ProyectoSoftware.Domain.ICommands;
-using ProyectoSoftware.Domain.IQueries;
+using ProyectoSoftware.Application.Interfaces.ICommands;
+using ProyectoSoftware.Application.Interfaces.IQueries;
+using ProyectoSoftware.Application.DTO;
 using ProyectoSoftware.Domain.Models;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace ProyectoSoftware.Application.Services
 {
@@ -20,13 +17,6 @@ namespace ProyectoSoftware.Application.Services
             _comandaQuery = comandaQuery;
             _comandaCommand = comandaCommand;
             _comandaMercaderiaCommand = comandaMercaderiaCommand;
-        }
-
-        public async Task<List<Comanda>> GetAll()
-        {
-            var comandas = await _comandaQuery.GetAll();
-
-            return comandas;
         }
 
         public async Task<List<ComandaResponse>> GetByDate(string fecha)
@@ -44,7 +34,7 @@ namespace ProyectoSoftware.Application.Services
                     ComandaResponse comandaResponse = new ComandaResponse();
                     comandaResponse.id = item.ComandaId;
                     comandaResponse.mercaderias = new List<MercaderiaComandaResponse>();
-                    comandaResponse.formaEntrega = new Domain.DTO.FormaEntrega();
+                    comandaResponse.formaEntrega = new Application.DTO.FormaEntrega();
                     comandaResponse.formaEntrega.id = item.FormaEntregaNavigation.FormaEntregaId;
                     comandaResponse.formaEntrega.descripcion = item.FormaEntregaNavigation.Descripcion;
                     comandaResponse.fecha = item.Fecha;
@@ -116,7 +106,7 @@ namespace ProyectoSoftware.Application.Services
                     {
                         id = getComanda.ComandaId,
                         mercaderias = mercaderiasResponse,
-                        formaEntrega = new Domain.DTO.FormaEntrega { id = getComanda.FormaEntregaNavigation.FormaEntregaId, descripcion = getComanda.FormaEntregaNavigation.Descripcion },
+                        formaEntrega = new Application.DTO.FormaEntrega { id = getComanda.FormaEntregaNavigation.FormaEntregaId, descripcion = getComanda.FormaEntregaNavigation.Descripcion },
                         total = Convert.ToInt64(total),
                         fecha = getComanda.Fecha
                     };
@@ -149,7 +139,7 @@ namespace ProyectoSoftware.Application.Services
             {
                 comandaResponse.id = comanda.ComandaId;
                 comandaResponse.mercaderias = new List<MercaderiaGetResponse>();
-                comandaResponse.formaEntrega = new Domain.DTO.FormaEntrega();
+                comandaResponse.formaEntrega = new Application.DTO.FormaEntrega();
                 comandaResponse.formaEntrega.id = comanda.FormaEntregaNavigation.FormaEntregaId;
                 comandaResponse.formaEntrega.descripcion = comanda.FormaEntregaNavigation.Descripcion;
                 comandaResponse.fecha = comanda.Fecha;

@@ -1,6 +1,6 @@
 ﻿using ProyectoSoftware.Domain.Models;
 
-namespace ProyectoSoftware.Domain.IQueries
+namespace ProyectoSoftware.Application.Interfaces.IQueries
 {
     public interface IFormaEntregaQuery
     {

@@ -1,6 +1,4 @@
-﻿using ProyectoSoftware.Domain.Models;
-
-namespace ProyectoSoftware.Domain.DTO
+﻿namespace ProyectoSoftware.Application.DTO
 {
     public class ComandaGetResponse
     {

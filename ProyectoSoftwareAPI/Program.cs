@@ -1,14 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using ProyectoSoftware.AccessData;
 using ProyectoSoftware.AccessData.Commands;
 using ProyectoSoftware.AccessData.Queries;
 using ProyectoSoftware.Application.Interfaces;
+using ProyectoSoftware.Application.Interfaces.ICommands;
+using ProyectoSoftware.Application.Interfaces.IQueries;
 using ProyectoSoftware.Application.Services;
-using ProyectoSoftware.Domain.DTO;
-using ProyectoSoftware.Domain.ICommands;
-using ProyectoSoftware.Domain.IQueries;
-using ProyectoSoftware.Domain.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +35,6 @@ builder.Services.AddTransient<IComandaMercaderiaQuery, ComandaMercaderiaQuery>()
 
 builder.Services.AddTransient<ITipoMercaderiaCommand, TipoMercaderiaCommand>();
 builder.Services.AddTransient<IMercaderiaCommand, MercaderiaCommand>();
-//builder.Services.AddTransient<IFormaEntregaCommand, FormaEntregaCommand>();
 builder.Services.AddTransient<IComandaCommand, ComandaCommand>();
 builder.Services.AddTransient<IComandaMercaderiaCommand, ComandaMercaderiaCommand>();
 builder.Services.AddTransient<IMigracionCommand, MigracionCommand>();

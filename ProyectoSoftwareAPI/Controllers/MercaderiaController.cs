@@ -1,8 +1,6 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProyectoSoftware.Application.Interfaces;
-using ProyectoSoftware.Domain.DTO;
+using ProyectoSoftware.Application.DTO;
 
 namespace ProyectoSoftwareAPI.Controllers
 {

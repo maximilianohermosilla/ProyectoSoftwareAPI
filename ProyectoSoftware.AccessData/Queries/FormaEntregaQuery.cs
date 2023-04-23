@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProyectoSoftware.Domain.IQueries;
+using ProyectoSoftware.Application.Interfaces.IQueries;
 using ProyectoSoftware.Domain.Models;
 
 namespace ProyectoSoftware.AccessData.Queries

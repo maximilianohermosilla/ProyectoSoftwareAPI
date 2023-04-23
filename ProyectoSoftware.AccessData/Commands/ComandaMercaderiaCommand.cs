@@ -1,6 +1,5 @@
-using ProyectoSoftware.Domain.ICommands;
+using ProyectoSoftware.Application.Interfaces.ICommands;
 using ProyectoSoftware.Domain.Models;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ProyectoSoftware.AccessData.Commands
 {

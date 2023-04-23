@@ -1,6 +1,6 @@
 ﻿using ProyectoSoftware.Domain.Models;
 
-namespace ProyectoSoftware.Domain.ICommands
+namespace ProyectoSoftware.Application.Interfaces.ICommands
 {
     public interface IComandaMercaderiaCommand
     {

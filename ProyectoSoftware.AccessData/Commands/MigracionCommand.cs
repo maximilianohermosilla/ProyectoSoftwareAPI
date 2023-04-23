@@ -1,5 +1,5 @@
-﻿using ProyectoSoftware.Domain.ICommands;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using ProyectoSoftware.Application.Interfaces.ICommands;
 
 namespace ProyectoSoftware.AccessData.Commands
 {

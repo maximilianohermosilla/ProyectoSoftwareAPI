@@ -1,5 +1,5 @@
 ﻿using ProyectoSoftware.Application.Interfaces;
-using ProyectoSoftware.Domain.IQueries;
+using ProyectoSoftware.Application.Interfaces.IQueries;
 using ProyectoSoftware.Domain.Models;
 
 namespace ProyectoSoftware.Application.Services

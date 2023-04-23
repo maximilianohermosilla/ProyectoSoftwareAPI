@@ -1,5 +1,5 @@
 ﻿using ProyectoSoftware.Application.Interfaces;
-using ProyectoSoftware.Domain.ICommands;
+using ProyectoSoftware.Application.Interfaces.ICommands;
 
 namespace ProyectoSoftware.Application.Services
 {

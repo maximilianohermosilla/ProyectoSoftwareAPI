@@ -1,5 +1,4 @@
-﻿using ProyectoSoftware.Domain.DTO;
-using ProyectoSoftware.Domain.ICommands;
+﻿using ProyectoSoftware.Application.Interfaces.ICommands;
 using ProyectoSoftware.Domain.Models;
 
 namespace ProyectoSoftware.AccessData.Commands

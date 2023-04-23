@@ -1,4 +1,4 @@
-﻿using ProyectoSoftware.Domain.DTO;
+﻿using ProyectoSoftware.Application.DTO;
 using ProyectoSoftware.Domain.Models;
 
 namespace ProyectoSoftware.Application.Interfaces

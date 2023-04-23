@@ -1,9 +1,8 @@
 ﻿using ProyectoSoftware.Application.Interfaces;
-using ProyectoSoftware.Domain.DTO;
-using ProyectoSoftware.Domain.ICommands;
-using ProyectoSoftware.Domain.IQueries;
+using ProyectoSoftware.Application.Interfaces.ICommands;
+using ProyectoSoftware.Application.Interfaces.IQueries;
+using ProyectoSoftware.Application.DTO;
 using ProyectoSoftware.Domain.Models;
-using System.Xml.Linq;
 
 namespace ProyectoSoftware.Application.Services
 {
