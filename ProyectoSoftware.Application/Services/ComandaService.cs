@@ -33,7 +33,7 @@ namespace ProyectoSoftware.Application.Services
 
                 if (date > hoy)
                 {
-                    response.StatusCode = 400;
+                    response.statusCode = 400;
                     response.message = "La fecha ingresada debe ser inferior a la fecha actual";
                     response.response = null;
                     return response;
@@ -70,7 +70,7 @@ namespace ProyectoSoftware.Application.Services
                 }
 
                 response.message = "Consulta realizada correctamente";
-                response.StatusCode = 200;
+                response.statusCode = 200;
                 response.response = listaDTO;
                 return response;
 
@@ -81,7 +81,7 @@ namespace ProyectoSoftware.Application.Services
             }
             catch (Exception ex)
             {
-                response.StatusCode = 400;
+                response.statusCode = 400;
                 response.message = ex.Message;
                 response.response = null;
 
@@ -119,7 +119,7 @@ namespace ProyectoSoftware.Application.Services
                     {
                         //await _comandaMercaderiaCommand.DeleteByComandaId(comanda.ComandaId);
                         await _comandaCommand.Delete(comanda);
-                        response.StatusCode = 400;
+                        response.statusCode = 400;
                         response.message = "Ocurrió un error con una de las mercaderias seleccionadas";
                         response.response = null;
                         return response;
@@ -153,13 +153,13 @@ namespace ProyectoSoftware.Application.Services
             catch (Exception ex)
             {
                 await _comandaCommand.Delete(comanda);
-                response.StatusCode = 400;
+                response.statusCode = 400;
                 response.message = ex.Message;
                 response.response = null;
                 return response;
             }
 
-            response.StatusCode = 201;
+            response.statusCode = 201;
             response.message = "Comanda insertada exitosamente";
             response.response = comandaResponse;
             return response;
@@ -177,7 +177,7 @@ namespace ProyectoSoftware.Application.Services
 
                 if (comanda == null)
                 {
-                    response.StatusCode = 404;
+                    response.statusCode = 404;
                     response.message = "No se encontró la comanda con id: " + id.ToString();
                     response.response = null;
                     return response;
@@ -212,14 +212,14 @@ namespace ProyectoSoftware.Application.Services
                     comandaResponse.total = total;
                 }
 
-                response.StatusCode = 200;
+                response.statusCode = 200;
                 response.message = "Se encontró la comanda";
                 response.response = comandaResponse;
                 return response;
             }
             catch (Exception ex)
             {
-                response.StatusCode = 400;
+                response.statusCode = 400;
                 response.message = ex.Message;
                 response.response = null;
                 return response;

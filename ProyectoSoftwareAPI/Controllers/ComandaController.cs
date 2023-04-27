@@ -24,7 +24,7 @@ namespace ProyectoSoftwareAPI.Controllers
             {
                 var response = await _service.GetByDate(fecha);
 
-                if (response.StatusCode == 400)
+                if (response.statusCode == 400)
                 {
                     return BadRequest(new BadRequest { message = response.message });
                 }
@@ -67,12 +67,12 @@ namespace ProyectoSoftwareAPI.Controllers
             {
                 var response = await _service.GetById(id);
 
-                if (response.StatusCode == 404)
+                if (response.statusCode == 404)
                 {
                     return NotFound(new BadRequest { message = string.Format(@"No se pudo encontrar la comanda {0}", id) });
                 }
 
-                if (response.StatusCode == 400)
+                if (response.statusCode == 400)
                 {
                     return BadRequest(new BadRequest { message = response.message });
                 }

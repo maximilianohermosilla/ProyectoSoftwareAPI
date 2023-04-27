@@ -27,11 +27,11 @@ namespace ProyectoSoftwareAPI.Controllers
                     var response = await _service.GetByTypeNameOrder(tipo, nombre, orden);
 
 
-                    if (response.StatusCode == 404)
+                    if (response.statusCode == 404)
                     {
                         return NotFound(new BadRequest { message = response.message });
                     }
-                    if (response.StatusCode == 400)
+                    if (response.statusCode == 400)
                     {
                         return BadRequest(new BadRequest { message = response.message });
                     }
@@ -59,7 +59,7 @@ namespace ProyectoSoftwareAPI.Controllers
             {
                 var response = await _service.Insert(request);
 
-                if (response.StatusCode == 409)
+                if (response.statusCode == 409)
                 {
                     return Conflict(new BadRequest { message = response.message });
                 }
@@ -110,17 +110,17 @@ namespace ProyectoSoftwareAPI.Controllers
             {
                 var response = await _service.Update(request, id);
 
-                if (response.StatusCode == 409)
+                if (response.statusCode == 409)
                 {
                     return Conflict(new BadRequest { message = response.message });
                 }
 
-                if (response.StatusCode == 404)
+                if (response.statusCode == 404)
                 {
                     return NotFound(new BadRequest { message = string.Format(@"No se pudo encontrar la mercaderia con id: {0}", id) });
                 }
 
-                if (response.StatusCode == 400)
+                if (response.statusCode == 400)
                 {
                     return BadRequest(new BadRequest { message = response.message });
                 }
@@ -150,17 +150,17 @@ namespace ProyectoSoftwareAPI.Controllers
 
                 var response = await _service.Delete(id);
 
-                if (response.StatusCode == 409)
+                if (response.statusCode == 409)
                 {
                     return Conflict(new BadRequest { message = response.message });
                 }
 
-                if (response.StatusCode == 404)
+                if (response.statusCode == 404)
                 {
                     return Conflict(new BadRequest { message = string.Format(@"No se pudo encontrar la mercaderia con id: {0}", id) });
                 }
 
-                if (response.StatusCode == 400)
+                if (response.statusCode == 400)
                 {
                     return BadRequest(new BadRequest { message = response.message });
                 }

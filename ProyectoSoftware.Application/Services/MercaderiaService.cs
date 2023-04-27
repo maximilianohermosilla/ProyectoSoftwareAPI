@@ -27,7 +27,7 @@ namespace ProyectoSoftware.Application.Services
             var mercaderias = await _query.GetAll();
 
             response.message = "Consulta realizada correctamente";
-            response.StatusCode = 200;
+            response.statusCode = 200;
             response.response = mercaderias;
 
             return response;
@@ -39,7 +39,7 @@ namespace ProyectoSoftware.Application.Services
             var mercaderias = await _query.GetAllByType(tipoMercaderiaId);
 
             response.message = "Consulta realizada correctamente";
-            response.StatusCode = 200;
+            response.statusCode = 200;
             response.response = mercaderias;
 
             return response;
@@ -66,14 +66,14 @@ namespace ProyectoSoftware.Application.Services
                 };
 
                 response.message = "Consulta realizada correctamente";
-                response.StatusCode = 200;
+                response.statusCode = 200;
                 response.response = mercaderiaResponse;
 
                 return response;
             }
 
             response.message = "No se encontró la mercadería seleccionada";
-            response.StatusCode = 404;
+            response.statusCode = 404;
             response.response = null;
 
             return response;
@@ -97,12 +97,12 @@ namespace ProyectoSoftware.Application.Services
                 };
 
                 response.message = "Consulta realizada correctamente";
-                response.StatusCode = 200;
+                response.statusCode = 200;
                 response.response = mercaderiaResponse;
             }
 
             response.message = "No se encontró la mercadería seleccionada";
-            response.StatusCode = 404;
+            response.statusCode = 404;
             response.response = null;
 
             return response;
@@ -121,7 +121,7 @@ namespace ProyectoSoftware.Application.Services
                 if (!lista.Any())
                 {
                     response.message = "No se encontró ninguna mercadería con los parámetros ingresados";
-                    response.StatusCode = 404;
+                    response.statusCode = 404;
                     response.response = null;
 
                     return response;
@@ -145,7 +145,7 @@ namespace ProyectoSoftware.Application.Services
                 }
 
                 response.message = "Consulta realizada correctamente";
-                response.StatusCode = 200;
+                response.statusCode = 200;
                 response.response = listaDTO;
 
                 return response;
@@ -153,7 +153,7 @@ namespace ProyectoSoftware.Application.Services
             catch (Exception ex)
             {
                 response.message = ex.Message;
-                response.StatusCode = 400;
+                response.statusCode = 400;
                 response.response = null;
 
                 return response;
@@ -170,7 +170,7 @@ namespace ProyectoSoftware.Application.Services
                 if (mercaderiaRequest.precio <= 0)
                 {
                     response.message = "El precio debe ser mayor a 0";
-                    response.StatusCode = 409;
+                    response.statusCode = 409;
                     response.response = null;
 
                     return response;
@@ -181,7 +181,7 @@ namespace ProyectoSoftware.Application.Services
                 if (tipoMercaderia == null)
                 {
                     response.message = "No existe el tipo de mercaderia seleccionado";
-                    response.StatusCode = 409;
+                    response.statusCode = 409;
                     response.response = null;
 
                     return response;
@@ -192,7 +192,7 @@ namespace ProyectoSoftware.Application.Services
                 if (mercaderiaName != null)
                 {
                     response.message = "Ya existe una mercaderia con el nombre ingresado";
-                    response.StatusCode = 409;
+                    response.statusCode = 409;
                     response.response = null;
 
                     return response;
@@ -214,7 +214,7 @@ namespace ProyectoSoftware.Application.Services
                     if (responseCommand == null)
                     {
                         response.message = "Ocurrió un error al insertar la comanda. Revise los parámetros";
-                        response.StatusCode = 409;
+                        response.statusCode = 409;
                         response.response = null;
                     }
                     else
@@ -232,7 +232,7 @@ namespace ProyectoSoftware.Application.Services
                     }
 
                     response.message = "Mercaderia ingresada correctamente";
-                    response.StatusCode = 200;
+                    response.statusCode = 200;
                     response.response = mercaderiaResponse;
 
                     return response;
@@ -242,7 +242,7 @@ namespace ProyectoSoftware.Application.Services
             catch (Exception ex)
             {
                 response.message = ex.Message;
-                response.StatusCode = 400;
+                response.statusCode = 400;
                 response.response = null;
 
                 return response;
@@ -261,7 +261,7 @@ namespace ProyectoSoftware.Application.Services
                 if (mercaderiaRequest.precio <= 0)
                 {
                     response.message = "El precio debe ser mayor a 0";
-                    response.StatusCode = 409;
+                    response.statusCode = 409;
                     response.response = null;
 
                     return response;
@@ -272,7 +272,7 @@ namespace ProyectoSoftware.Application.Services
                 if (tipoMercaderia == null)
                 {
                     response.message = "No existe el tipo de mercaderia seleccionado";
-                    response.StatusCode = 409;
+                    response.statusCode = 409;
                     response.response = null;
 
                     return response;
@@ -285,7 +285,7 @@ namespace ProyectoSoftware.Application.Services
                     if (mercaderiaName != null)
                     {
                         response.message = "Ya existe otra mercaderia con el nombre ingresado";
-                        response.StatusCode = 409;
+                        response.statusCode = 409;
                         response.response = null;
 
                         return response;
@@ -309,7 +309,7 @@ namespace ProyectoSoftware.Application.Services
                         {
                             id = responseUpdate.MercaderiaId,
                             nombre = responseUpdate.Nombre,
-                            tipo = new TipoMercaderiaResponse { id = responseUpdate.TipoMercaderiaId, descripcion = "" },
+                            tipo = new TipoMercaderiaResponse { id = tipoMercaderia.TipoMercaderiaId, descripcion = tipoMercaderia.Descripcion },
                             precio = responseUpdate.Precio,
                             ingredientes = responseUpdate.Ingredientes,
                             imagen = responseUpdate.Imagen,
@@ -319,14 +319,14 @@ namespace ProyectoSoftware.Application.Services
                     else
                     {
                         response.message = "Ocurrió un error al actualizar la mercadería";
-                        response.StatusCode = 400;
+                        response.statusCode = 400;
                         response.response = null;
 
                         return response;
                     }
 
                     response.message = "Mercaderia actualizada correctamente";
-                    response.StatusCode = 200;
+                    response.statusCode = 200;
                     response.response = mercaderiaResponse;
 
                     return response;
@@ -334,7 +334,7 @@ namespace ProyectoSoftware.Application.Services
                 else
                 {
                     response.message = "No se ha encontrado la mercaderia seleccionada";
-                    response.StatusCode = 404;
+                    response.statusCode = 404;
                     response.response = null;
 
                     return response;
@@ -343,7 +343,7 @@ namespace ProyectoSoftware.Application.Services
             catch (Exception ex)
             {
                 response.message = ex.Message;
-                response.StatusCode = 400;
+                response.statusCode = 400;
                 response.response = null;
 
                 return response;
@@ -362,7 +362,7 @@ namespace ProyectoSoftware.Application.Services
                 if (mercaderia == null)
                 {
                     response.message = "No se ha encontrado la mercaderia seleccionada";
-                    response.StatusCode = 404;
+                    response.statusCode = 404;
                     response.response = null;
 
                     return response;
@@ -374,7 +374,7 @@ namespace ProyectoSoftware.Application.Services
                     if (existenComandas)
                     {
                         response.message = "No se puede eliminar la mercadería porque existe en al menos una comanda";
-                        response.StatusCode = 409;
+                        response.statusCode = 409;
                         response.response = null;
 
                         return response;
@@ -394,7 +394,7 @@ namespace ProyectoSoftware.Application.Services
                     await _command.Delete(mercaderia);
 
                     response.message = "Mercaderia eliminada correctamente";
-                    response.StatusCode = 200;
+                    response.statusCode = 200;
                     response.response = mercaderiaResponse;
 
                     return response;
@@ -403,7 +403,7 @@ namespace ProyectoSoftware.Application.Services
             catch (Exception ex)
             {
                 response.message = ex.Message;
-                response.StatusCode = 400;
+                response.statusCode = 400;
                 response.response = null;
 
                 return response;
