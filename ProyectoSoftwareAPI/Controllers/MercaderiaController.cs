@@ -29,7 +29,7 @@ namespace ProyectoSoftwareAPI.Controllers
 
                     if (response.statusCode == 404)
                     {
-                        return NotFound(new BadRequest { message = response.message });
+                        return Ok(response.response);
                     }
                     if (response.statusCode == 400)
                     {
@@ -64,9 +64,9 @@ namespace ProyectoSoftwareAPI.Controllers
                     return Conflict(new BadRequest { message = response.message });
                 }
 
-                if (response.response == null)
+                if (response.statusCode == 400)
                 {
-                    return BadRequest(new { message = "Ocurrió un error al insertar la mercadería. " + response.message });
+                    return BadRequest(new BadRequest { message = response.message });
                 }
 
                 return Created("", response.response);
@@ -145,7 +145,7 @@ namespace ProyectoSoftwareAPI.Controllers
 
                 if (existeComanda)
                 {
-                    return Conflict("No se puede eliminar la mercaderia porque existe en al menos una comanda");
+                    return Conflict(new BadRequest { message = "No se puede eliminar la mercaderia porque existe en al menos una comanda" });
                 }
 
                 var response = await _service.Delete(id);

@@ -1,13 +1,13 @@
-﻿using ProyectoSoftware.Application.Interfaces;
+﻿using ProyectoSoftware.Application.DTO;
+using ProyectoSoftware.Application.Interfaces;
 using ProyectoSoftware.Application.Interfaces.ICommands;
 using ProyectoSoftware.Application.Interfaces.IQueries;
-using ProyectoSoftware.Application.DTO;
 using ProyectoSoftware.Domain.Models;
 
 namespace ProyectoSoftware.Application.Services
 {
-    public class MercaderiaService: IMercaderiaService
-    {        
+    public class MercaderiaService : IMercaderiaService
+    {
         private readonly IMercaderiaQuery _query;
         private readonly ITipoMercaderiaQuery _tipoMercaderiaQuery;
         private readonly IMercaderiaCommand _command;
@@ -18,7 +18,7 @@ namespace ProyectoSoftware.Application.Services
             _query = query;
             _command = command;
             _comandaMercaderiaQuery = comandaMercaderiaQuery;
-            _tipoMercaderiaQuery = tipoMercaderiaQuery; 
+            _tipoMercaderiaQuery = tipoMercaderiaQuery;
         }
 
         public async Task<ResponseModel> GetAll()
@@ -114,7 +114,7 @@ namespace ProyectoSoftware.Application.Services
             List<MercaderiaGetResponse> listaDTO = new List<MercaderiaGetResponse>();
 
             try
-            { 
+            {
                 orden = orden.ToUpper() == "DESC" ? "DESC" : "ASC";
                 var lista = await _query.GetByTypeNameOrder(tipo, nombre, orden);
 
@@ -122,7 +122,7 @@ namespace ProyectoSoftware.Application.Services
                 {
                     response.message = "No se encontró ninguna mercadería con los parámetros ingresados";
                     response.statusCode = 404;
-                    response.response = null;
+                    response.response = lista;
 
                     return response;
                 }
@@ -170,7 +170,16 @@ namespace ProyectoSoftware.Application.Services
                 if (mercaderiaRequest.precio <= 0)
                 {
                     response.message = "El precio debe ser mayor a 0";
-                    response.statusCode = 409;
+                    response.statusCode = 400;
+                    response.response = null;
+
+                    return response;
+                }
+
+                if (mercaderiaRequest.nombre == "")
+                {
+                    response.message = "Debe ingresar un nombre para la mercadería";
+                    response.statusCode = 400;
                     response.response = null;
 
                     return response;
@@ -241,7 +250,7 @@ namespace ProyectoSoftware.Application.Services
             }
             catch (Exception ex)
             {
-                response.message = ex.Message;
+                response.message = "Ocurrió un error al insertar la mercadería" ;
                 response.statusCode = 400;
                 response.response = null;
 
@@ -256,12 +265,10 @@ namespace ProyectoSoftware.Application.Services
 
             try
             {
-                var mercaderiaUpdate = await _query.GetById(id);
-
                 if (mercaderiaRequest.precio <= 0)
                 {
                     response.message = "El precio debe ser mayor a 0";
-                    response.statusCode = 409;
+                    response.statusCode = 400;
                     response.response = null;
 
                     return response;
@@ -278,22 +285,24 @@ namespace ProyectoSoftware.Application.Services
                     return response;
                 }
 
-                //Si el nombre ingresado es distinto al nombre que tenía la mercaderia, valido que no se repita
-                if (mercaderiaRequest.nombre != mercaderiaUpdate.Nombre)
-                {
-                    var mercaderiaName = await _query.GetByName(mercaderiaRequest.nombre);
-                    if (mercaderiaName != null)
-                    {
-                        response.message = "Ya existe otra mercaderia con el nombre ingresado";
-                        response.statusCode = 409;
-                        response.response = null;
-
-                        return response;
-                    }
-                }
+                var mercaderiaUpdate = await _query.GetById(id); 
 
                 if (mercaderiaUpdate != null)
-                {
+                {   
+                    //Si el nombre ingresado es distinto al nombre que tenía la mercaderia, valido que no se repita
+                    if (mercaderiaRequest.nombre != mercaderiaUpdate.Nombre)
+                    {
+                        var mercaderiaName = await _query.GetByName(mercaderiaRequest.nombre);
+                        if (mercaderiaName != null)
+                        {
+                            response.message = "Ya existe otra mercaderia con el nombre ingresado";
+                            response.statusCode = 409;
+                            response.response = null;
+
+                            return response;
+                        }
+                    }
+
                     mercaderiaUpdate.Nombre = mercaderiaRequest.nombre;
                     mercaderiaUpdate.TipoMercaderiaId = mercaderiaRequest.tipo;
                     mercaderiaUpdate.Precio = Convert.ToInt32(mercaderiaRequest.precio);
@@ -411,7 +420,7 @@ namespace ProyectoSoftware.Application.Services
         }
 
         public async Task<bool> ExisteComandaMercaderia(int id)
-        {            
+        {
             var comandasMercaderia = await _comandaMercaderiaQuery.GetByMercaderiaId(id);
 
             return comandasMercaderia.Any();

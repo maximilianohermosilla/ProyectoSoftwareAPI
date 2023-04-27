@@ -1,5 +1,4 @@
-﻿
-using ProyectoSoftware.Domain.Models;
+﻿using ProyectoSoftware.Domain.Models;
 
 namespace ProyectoSoftware.Application.Interfaces
 {

@@ -45,6 +45,10 @@ builder.Services.AddTransient<IMigracionCommand, MigracionCommand>();
 
 var app = builder.Build();
 
+//MIGRACION INICIAL
+var myService = builder.Services.BuildServiceProvider().GetService<IMigracionService>();
+myService.UpdateMigration();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
