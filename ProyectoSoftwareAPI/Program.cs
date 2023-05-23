@@ -56,6 +56,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(x => { x.SwaggerEndpoint("/swagger/v1/swagger.yaml", "Swagger"); });
 }
 
+//USE CORS
+app.UseCors(policy => policy.AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .SetIsOriginAllowed(origin => true)
+                            .AllowCredentials());
+
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

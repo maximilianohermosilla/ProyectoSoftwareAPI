@@ -18,7 +18,7 @@ namespace ProyectoSoftwareAPI.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<MercaderiaGetResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetByTypeNameOrder(int? tipo, string? nombre, string orden = "ASC")
+        public async Task<IActionResult> GetByTypeNameOrder(int? tipo, string? nombre, string? orden = "ASC")
         {
             try
             {

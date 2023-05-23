@@ -223,7 +223,7 @@ namespace ProyectoSoftware.Application.Services
                     if (responseCommand == null)
                     {
                         response.message = "Ocurrió un error al insertar la comanda. Revise los parámetros";
-                        response.statusCode = 409;
+                        response.statusCode = 400;
                         response.response = null;
                     }
                     else
@@ -241,7 +241,7 @@ namespace ProyectoSoftware.Application.Services
                     }
 
                     response.message = "Mercaderia ingresada correctamente";
-                    response.statusCode = 200;
+                    response.statusCode = 201;
                     response.response = mercaderiaResponse;
 
                     return response;

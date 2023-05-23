@@ -18,7 +18,7 @@ namespace ProyectoSoftwareAPI.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(List<ComandaResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetByDate(string fecha)
+        public async Task<IActionResult> GetByDate(string? fecha)
         {
             try
             {
@@ -61,10 +61,15 @@ namespace ProyectoSoftwareAPI.Controllers
         [ProducesResponseType(typeof(ComandaGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetById([FromQuery]Guid id)
         {
             try
             {
+                if (id == Guid.Parse("00000000-0000-0000-0000-000000000000"))
+                {
+                    return BadRequest(new BadRequest { message = "El Id de comanda ingresado no es válido" });
+                }
+
                 var response = await _service.GetById(id);
 
                 if (response.statusCode == 404)
