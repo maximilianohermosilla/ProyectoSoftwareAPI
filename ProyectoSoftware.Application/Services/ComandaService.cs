@@ -165,7 +165,7 @@ namespace ProyectoSoftware.Application.Services
             return response;
         }
 
-        public async Task<ResponseModel> GetById(Guid id)
+        public async Task<ResponseModel> GetById(Guid? id)
         {
             ResponseModel response = new ResponseModel();
             ComandaGetResponse comandaResponse = new ComandaGetResponse();

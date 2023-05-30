@@ -18,11 +18,11 @@ namespace ProyectoSoftwareAPI.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<MercaderiaGetResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetByTypeNameOrder(int? tipo, string? nombre, string orden = "ASC")
+        public async Task<IActionResult> GetByTypeNameOrder(int? tipo, string? nombre, string? orden = "ASC")
         {
             try
             {
-                if (orden.ToUpper() == "DESC" || orden.ToUpper() == "ASC")
+                if (orden != null && (orden.ToUpper() == "DESC" || orden.ToUpper() == "ASC"))
                 {
                     var response = await _service.GetByTypeNameOrder(tipo, nombre, orden);
 
@@ -81,7 +81,7 @@ namespace ProyectoSoftwareAPI.Controllers
         [ProducesResponseType(typeof(MercaderiaResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int? id)
         {
             try
             {
@@ -157,7 +157,7 @@ namespace ProyectoSoftwareAPI.Controllers
 
                 if (response.statusCode == 404)
                 {
-                    return Conflict(new BadRequest { message = string.Format(@"No se pudo encontrar la mercaderia con id: {0}", id) });
+                    return NotFound(new BadRequest { message = string.Format(@"No se pudo encontrar la mercaderia con id: {0}", id) });
                 }
 
                 if (response.statusCode == 400)

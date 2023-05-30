@@ -13,7 +13,7 @@ namespace ProyectoSoftware.AccessData.Queries
             _context = context;
         }
 
-        public async Task<Comanda> GetById(Guid id)
+        public async Task<Comanda> GetById(Guid? id)
         {
             var response = await _context.Comandas.Include(f => f.FormaEntregaNavigation).Include(e => e.ComandasMercaderia)
                                                    .ThenInclude(cm => cm.MercaderiaNavigation).ThenInclude(tm => tm.TipoMercaderiaNavigation)
@@ -24,9 +24,12 @@ namespace ProyectoSoftware.AccessData.Queries
 
         public async Task<List<Comanda>> GetByDate(DateTime fecha)
         {
+
             var lista = await _context.Comandas.Include(f => f.FormaEntregaNavigation).Include(e => e.ComandasMercaderia)
-                                               .ThenInclude(cm => cm.MercaderiaNavigation).Where(e => e.Fecha == fecha).ToListAsync();
-                        
+                                               .ThenInclude(cm => cm.MercaderiaNavigation).Where(e => (e.Fecha == fecha && fecha != Convert.ToDateTime(null))
+                                                                                                        || fecha == Convert.ToDateTime(null)).ToListAsync();
+
+
             return lista;
         }
     }

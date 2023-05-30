@@ -8,7 +8,7 @@ namespace ProyectoSoftware.Application.Interfaces
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetAllByType(int tipoMercaderiaId);
         Task<ResponseModel> GetByName(string name);
-        Task<ResponseModel> GetById(int name);
+        Task<ResponseModel> GetById(int? id);
         Task<ResponseModel> Insert(MercaderiaRequest mercaderia);
         Task<ResponseModel> GetByTypeNameOrder(int? tipo, string? nombre, string orden);
         Task<ResponseModel> Update(MercaderiaRequest mercaderia, int id);

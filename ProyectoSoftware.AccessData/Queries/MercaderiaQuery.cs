@@ -26,7 +26,7 @@ namespace ProyectoSoftware.AccessData.Queries
             return lista;
         }
 
-        public async Task<Mercaderia> GetById(int id)
+        public async Task<Mercaderia> GetById(int? id)
         {
             var mercaderia = await _context.Mercaderias.Include(m => m.TipoMercaderiaNavigation).Where(m => m.MercaderiaId == id).FirstOrDefaultAsync();
 
