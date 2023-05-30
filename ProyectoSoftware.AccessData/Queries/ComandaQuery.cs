@@ -13,7 +13,7 @@ namespace ProyectoSoftware.AccessData.Queries
             _context = context;
         }
 
-        public async Task<Comanda> GetById(Guid id)
+        public async Task<Comanda> GetById(Guid? id)
         {
             var response = await _context.Comandas.Include(f => f.FormaEntregaNavigation).Include(e => e.ComandasMercaderia)
                                                    .ThenInclude(cm => cm.MercaderiaNavigation).ThenInclude(tm => tm.TipoMercaderiaNavigation)

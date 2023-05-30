@@ -61,7 +61,7 @@ namespace ProyectoSoftwareAPI.Controllers
         [ProducesResponseType(typeof(ComandaGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BadRequest), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById([FromQuery]Guid id)
+        public async Task<IActionResult> GetById([FromQuery]Guid? id)
         {
             try
             {

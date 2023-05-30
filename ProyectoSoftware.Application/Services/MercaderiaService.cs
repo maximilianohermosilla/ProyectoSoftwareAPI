@@ -45,7 +45,7 @@ namespace ProyectoSoftware.Application.Services
             return response;
         }
 
-        public async Task<ResponseModel> GetById(int id)
+        public async Task<ResponseModel> GetById(int? id)
         {
             ResponseModel response = new ResponseModel();
             MercaderiaResponse mercaderiaResponse = new MercaderiaResponse();
@@ -190,7 +190,7 @@ namespace ProyectoSoftware.Application.Services
                 if (tipoMercaderia == null)
                 {
                     response.message = "No existe el tipo de mercaderia seleccionado";
-                    response.statusCode = 409;
+                    response.statusCode = 400;
                     response.response = null;
 
                     return response;
@@ -279,7 +279,7 @@ namespace ProyectoSoftware.Application.Services
                 if (tipoMercaderia == null)
                 {
                     response.message = "No existe el tipo de mercaderia seleccionado";
-                    response.statusCode = 409;
+                    response.statusCode = 400;
                     response.response = null;
 
                     return response;
